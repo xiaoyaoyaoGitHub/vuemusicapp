@@ -18,12 +18,12 @@ export default defineComponent({
       default: 0
     }
   },
-  setup(props) {
+  emit: ['scroll'],
+  setup(props, { emit }) {
     const rootRef = ref(null)
-    const scroll = useScroll(rootRef, props)
+    const scroll = useScroll(rootRef, props, emit)
 
     onUpdated(() => {
-      console.log(scroll.value)
       scroll.value.enable()
 
       scroll.value.refresh()
