@@ -13,7 +13,7 @@
     </ul>
     <!-- 顶部滚动定位 -->
     <div class="fixed">
-      <div class="fixed-title"></div>
+      <div class="fixed-title" v-show="fixedTitle">{{ fixedTitle }}</div>
     </div>
   </scroll>
 </template>
@@ -37,11 +37,12 @@ export default defineComponent({
     }
   },
   setup(props) {
-    const { groupRef, onScroll } = useFixed(props)
+    const { groupRef, onScroll, fixedTitle } = useFixed(props)
 
     return {
       groupRef,
-      onScroll
+      onScroll,
+      fixedTitle
     }
   }
 })
