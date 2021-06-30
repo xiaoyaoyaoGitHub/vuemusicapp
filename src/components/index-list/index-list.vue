@@ -37,7 +37,7 @@ export default defineComponent({
     }
   },
   setup(props) {
-    const { groupRef, onScroll, fixedTitle } = useFixed(props)
+    const { groupRef, onScroll, fixedTitle = '' } = useFixed(props)
 
     return {
       groupRef,
@@ -47,6 +47,7 @@ export default defineComponent({
   }
 })
 </script>
+
 <style lang="scss" scoped>
 ;.index-list {
   position: relative;
