@@ -1,5 +1,5 @@
 <template>
-  <scroll class="index-list" @scroll="onScroll" :probe-type="3">
+  <scroll class="index-list" @scroll="onScroll" :probe-type="3" ref="scrollRef">
     <ul ref="groupRef">
       <li v-for="group in data" :key="group.title" class="group">
         <h2 class="title">{{ group.title }}</h2>
@@ -15,6 +15,20 @@
     <div class="fixed" :style="fixedStyle">
       <div class="fixed-title" v-show="fixedTitle">{{ fixedTitle }}</div>
     </div>
+    <!-- 快速定位导航栏 -->
+    <div class="shortcut" @touchstart.stop.prevent="onShortCutTouchStart" @touchmove.stop.prevent="onShortCutTouchMove">
+      <ul>
+        <li
+          v-for="(item, index) in shortCutList"
+          :key="index"
+          :data-index="index"
+          class="item"
+          :class="{ current: index === currentIndex }"
+        >
+          {{ item }}
+        </li>
+      </ul>
+    </div>
   </scroll>
 </template>
 
@@ -22,6 +36,7 @@
 import { defineComponent } from 'vue'
 import Scroll from './../scroll/scroll'
 import useFixed from './use-fixed'
+import useShortCut from './use-shortcut'
 
 export default defineComponent({
   name: 'index-list',
@@ -37,13 +52,27 @@ export default defineComponent({
     }
   },
   setup(props) {
-    const { groupRef, onScroll, fixedTitle = '', fixedStyle } = useFixed(props)
-
+    const {
+      groupRef,
+      onScroll,
+      fixedTitle = '',
+      fixedStyle,
+      currentIndex
+    } = useFixed(props)
+    const { shortCutList, onShortCutTouchStart, onShortCutTouchMove, scrollRef } = useShortCut(
+      props,
+      groupRef
+    )
     return {
       groupRef,
       onScroll,
       fixedTitle,
-      fixedStyle
+      fixedStyle,
+      shortCutList,
+      onShortCutTouchStart,
+      onShortCutTouchMove,
+      scrollRef,
+      currentIndex
     }
   }
 })
