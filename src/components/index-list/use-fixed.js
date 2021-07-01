@@ -5,25 +5,44 @@ export default function useFixed(props) {
     const listHeights = ref([]) // 设置数据,保存每个child的height
     const scrollY = ref(0) // 竖向滚动条的高度
     const currentIndex = ref(0) // 当前滚动到的索引
-    const fixedTitle = ref('') // 固定标题
+    const TITLE_HEIGHT = 30
+    const distance = ref(0) // 下个group距离顶部位置
+    const fixedTitle = ref('')
+    // computed(() => {
+    //     if (scrollY.value < 0) {
+    //         return ''
+    //     }
+    //     const currentGroups = props.data[currentIndex.value]
+    //     return currentGroups ? currentGroups.title : ''
+    // })
+    const fixedStyle = computed(() => {
+        const distanceValue = distance.value
+        const diff = (distanceValue > 0 && distanceValue < TITLE_HEIGHT) ? distanceValue - TITLE_HEIGHT : 0
+        return {
+            transform: `translate3D(0, ${diff}px,0)`
+        }
+    })
     // 监听props.data的变化,是否有数据传入
     watch(() => props.data, async () => {
         await nextTick()
         calculate()
     })
-    watch(scrollY, () => {
+    watch(scrollY, (newY) => {
         if (scrollY.value <= 0) {
             fixedTitle.value = ''
         } else {
             fixedTitle.value = props.data[currentIndex.value].title
         }
-        listHeights.value.forEach((item, index) => {
-            if (scrollY.value >= item) {
-                currentIndex.value = index // 监听当前滚动到的位置
+        const listHeightsValue = listHeights.value
+        listHeightsValue.forEach((item, index) => {
+            const itemBottom = listHeightsValue[index + 1]
+            if (newY <= itemBottom && newY >= item) {
+                currentIndex.value = index
+                distance.value = itemBottom - newY
             }
         })
     })
-    watch(currentIndex, () => { // 这个值变化时才更新fixedTitle, 否则会一直触发updated导致不能下拉回弹
+    watch(currentIndex, () => {
         fixedTitle.value = props.data[currentIndex.value].title
     })
     function calculate() {
@@ -45,6 +64,7 @@ export default function useFixed(props) {
     return {
         groupRef,
         fixedTitle,
-        onScroll
+        onScroll,
+        fixedStyle
     }
 }
