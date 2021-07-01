@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import { defineComponent, ref, onUpdated, onActivated } from 'vue'
+import { defineComponent, ref, onUpdated } from 'vue'
 import useScroll from './use-scroll'
 export default defineComponent({
   props: {
@@ -22,6 +22,10 @@ export default defineComponent({
   setup(props, { emit }) {
     const rootRef = ref(null)
     const scroll = useScroll(rootRef, props, emit)
+    onUpdated(() => {
+      scroll.value.enable()
+      scroll.value.refresh()
+    })
     return {
       rootRef,
       scroll
