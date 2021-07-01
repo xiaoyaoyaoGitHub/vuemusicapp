@@ -1,6 +1,6 @@
 import { nextTick, ref, watch, computed } from 'vue'
 
-export default function useFixed(props) {
+export default function useFixed(props, emit) {
     const groupRef = ref(null) // 获取滚动条dom
     const listHeights = ref([]) // 设置数据,保存每个child的height
     const scrollY = ref(0) // 竖向滚动条的高度
@@ -57,6 +57,10 @@ export default function useFixed(props) {
         };
     }
 
+    function selectSinger(singer) {
+        emit('select', singer)
+    }
+
     function onScroll(pos) {
         scrollY.value = -pos.y
     }
@@ -66,6 +70,7 @@ export default function useFixed(props) {
         fixedTitle,
         onScroll,
         fixedStyle,
-        currentIndex
+        currentIndex,
+        selectSinger
     }
 }

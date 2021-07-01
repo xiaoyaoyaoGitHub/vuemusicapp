@@ -4,7 +4,7 @@
       <li v-for="group in data" :key="group.title" class="group">
         <h2 class="title">{{ group.title }}</h2>
         <ul>
-          <li class="item" v-for="item in group.list" :key="item.id">
+          <li class="item" @click="selectSinger(item)" v-for="item in group.list" :key="item.id">
             <img v-lazy="item.pic" alt="" class="avatar" />
             <span class="name">{{ item.name }}</span>
           </li>
@@ -16,7 +16,11 @@
       <div class="fixed-title" v-show="fixedTitle">{{ fixedTitle }}</div>
     </div>
     <!-- 快速定位导航栏 -->
-    <div class="shortcut" @touchstart.stop.prevent="onShortCutTouchStart" @touchmove.stop.prevent="onShortCutTouchMove">
+    <div
+      class="shortcut"
+      @touchstart.stop.prevent="onShortCutTouchStart"
+      @touchmove.stop.prevent="onShortCutTouchMove"
+    >
       <ul>
         <li
           v-for="(item, index) in shortCutList"
@@ -43,6 +47,7 @@ export default defineComponent({
   components: {
     Scroll
   },
+  emits: ['select'],
   props: {
     data: {
       type: Array,
@@ -51,18 +56,21 @@ export default defineComponent({
       }
     }
   },
-  setup(props) {
+  setup(props, { emit }) {
     const {
       groupRef,
       onScroll,
       fixedTitle = '',
       fixedStyle,
-      currentIndex
-    } = useFixed(props)
-    const { shortCutList, onShortCutTouchStart, onShortCutTouchMove, scrollRef } = useShortCut(
-      props,
-      groupRef
-    )
+      currentIndex,
+      selectSinger
+    } = useFixed(props, emit)
+    const {
+      shortCutList,
+      onShortCutTouchStart,
+      onShortCutTouchMove,
+      scrollRef
+    } = useShortCut(props, groupRef)
     return {
       groupRef,
       onScroll,
@@ -72,7 +80,8 @@ export default defineComponent({
       onShortCutTouchStart,
       onShortCutTouchMove,
       scrollRef,
-      currentIndex
+      currentIndex,
+      selectSinger
     }
   }
 })
