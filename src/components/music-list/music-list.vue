@@ -22,6 +22,7 @@
       v-loading="loading"
       :probe-type="3"
       :style="scrollStyle"
+      @scroll="onScroll"
     >
       <div class="song-list-wrapper">
         <song-list :songs="songs"></song-list>
@@ -34,12 +35,14 @@
 import { defineComponent } from 'vue'
 import Scroll from '@/components/scroll/scroll'
 import SongList from '@/components/base/song-list/song-list'
-const IMAGE_HEIGHT = 263
+const TOP_HEIGHT = 40
 export default defineComponent({
   name: 'music-lists',
   data() {
     return {
-      imageHeight: IMAGE_HEIGHT
+      imageHeight: 0,
+      scrollY: 0,
+      maxTranslateY: 0
     }
   },
   props: {
@@ -69,9 +72,25 @@ export default defineComponent({
   },
   computed: {
     bgImageStyle() {
+      const scrollY = this.scrollY
+      let paddingTop = '70%'
+      let translateZ = 0
+      let height = 0
+      let zIndex = 0
+      const scale = 1
+      if (this.maxTranslateY < scrollY) { // 向上滚动
+        height = `${TOP_HEIGHT}px`
+        paddingTop = 0
+        zIndex = 10
+        translateZ = 1
+      }
+
       return {
         backgroundImage: `url(${this.pic})`,
-        height: this.imageHeight + 'px'
+        paddingTop,
+        height,
+        zIndex,
+        transform: `scale(${scale})translateZ(${translateZ}px)`
       }
     },
     scrollStyle() {
@@ -80,9 +99,20 @@ export default defineComponent({
       }
     }
   },
+  updated() {
+    // console.log('updated')
+  },
+  mounted() {
+    this.imageHeight = this.$refs.bgImage.clientHeight
+    this.maxTranslateY = this.imageHeight - TOP_HEIGHT
+  },
   methods: {
     goBack() {
       this.$router.back()
+    },
+    onScroll(e) {
+      // console.log(e)
+      this.scrollY = -e.y // 保存滚动的高度
     }
   }
 })
@@ -165,8 +195,8 @@ export default defineComponent({
     position: absolute;
     bottom: 0;
     width: 100%;
-    z-index: 0;
-    overflow: hidden;
+    // z-index: 0;
+    // overflow: hidden;
     .song-list-wrapper {
       padding: 20px 30px;
       background: $color-background;
