@@ -26,7 +26,7 @@
       @scroll="onScroll"
     >
       <div class="song-list-wrapper">
-        <song-list :songs="songs"></song-list>
+        <song-list :songs="songs" @select="selectSong"></song-list>
       </div>
     </scroll>
   </div>
@@ -36,6 +36,8 @@
 import { defineComponent } from 'vue'
 import Scroll from '@/components/scroll/scroll'
 import SongList from '@/components/base/song-list/song-list'
+import { SET_PLAY } from '@/store/type'
+import { mapActions } from 'vuex'
 const TOP_HEIGHT = 40
 export default defineComponent({
   name: 'music-lists',
@@ -132,7 +134,13 @@ export default defineComponent({
     onScroll(e) {
       // console.log(e)
       this.scrollY = -e.y // 保存滚动的高度
-    }
+    },
+    selectSong({ song, index }) {
+      this[SET_PLAY](song, index)
+    },
+    ...mapActions([
+      SET_PLAY
+    ])
   }
 })
 </script>

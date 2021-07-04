@@ -8,3 +8,29 @@ vue3开发的音乐app
  
 ## 问题
 - 因为组件不停的触发updated导致BScroll不能下拉回弹问题
+
+
+## state
+ - sequenceList 列表
+ - playList 播放列表
+ - playing 是否播放
+ - playMode 播放模式
+ - currentIndex 当前播放索引
+ - fullScreen 是否全屏
+
+ getter
+
+ - currentSong 当前播放歌曲
+
+ mutations
+
+ - setPlayingState 修改播放状态
+ - setSquenceList 歌曲列表
+ - setPlayList 修改播放歌曲列表
+ - setPlayMode 修改播放状态
+ - setCurrentIndex 修改当前播放歌曲
+ - setFullScreen 设置全屏
+
+ actions 
+
+ - selectPlay 
