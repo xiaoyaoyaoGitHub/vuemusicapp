@@ -9,7 +9,8 @@
 import { defineComponent } from 'vue'
 import { getSingerList } from '@/service/singer'
 import IndexList from '@/components/index-list/index-list'
-
+import Storage from 'good-storage'
+import { SINGER_KEY } from '@/assets/js/constance'
 export default defineComponent({
   name: 'Singer',
   components: {
@@ -29,6 +30,7 @@ export default defineComponent({
     select(singer) {
       // console.log(singer)
       this.selectSinger = singer
+      Storage.session.set(SINGER_KEY, singer)
       this.$router.push({
         path: `/singer/${singer.mid}`
       })
