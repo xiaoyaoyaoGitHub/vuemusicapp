@@ -20,6 +20,7 @@
     <scroll
       class="list"
       v-loading="loading"
+      v-no-result:[noResultText]="noResult"
       :probe-type="3"
       :style="scrollStyle"
       @scroll="onScroll"
@@ -64,6 +65,10 @@ export default defineComponent({
         return []
       }
     },
+    noResultText: {
+      type: String,
+      default: '抱歉,没有找到歌曲哦'
+    },
     loading: Boolean
   },
   components: {
@@ -71,6 +76,9 @@ export default defineComponent({
     SongList
   },
   computed: {
+    noResult() {
+      return !this.loading && !this.songs.length
+    },
     bgImageStyle() {
       const scrollY = this.scrollY
       let paddingTop = '70%'

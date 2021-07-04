@@ -4,6 +4,7 @@ import router from './router'
 import store from './store'
 import lazyPlugin from 'vue3-lazy'
 import loadingDirective from '@/components/base/loading/directive'
+import noResultDirective from '@/components/base/no-result/directive'
 
 // 全局引入样式
 import '@/assets/scss/index.scss'
@@ -16,4 +17,5 @@ app.use(lazyPlugin, {
 app.use(store)
 app.use(router)
 app.directive('loading', loadingDirective)
+app.directive('no-result', noResultDirective)
 app.mount('#app')
