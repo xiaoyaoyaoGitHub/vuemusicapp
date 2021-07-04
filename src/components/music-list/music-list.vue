@@ -14,7 +14,7 @@
         <span class="text">随机播放全部</span>
       </div>
       <!-- 模糊效果 -->
-      <div class="filter"></div>
+      <div class="filter" :style="filterStyle"></div>
     </div>
     <!-- 列表 -->
     <scroll
@@ -91,6 +91,17 @@ export default defineComponent({
         height,
         zIndex,
         transform: `scale(${scale})translateZ(${translateZ}px)`
+      }
+    },
+    filterStyle() {
+      const scrollY = this.scrollY
+      const imageHeight = this.imageHeight
+      let blur = 0
+      if (scrollY > 0) {
+        blur = Math.min(this.maxTranslateY / imageHeight, scrollY / imageHeight) * 20
+      }
+      return {
+        backdropFilter: `blur(${blur}px)`
       }
     },
     scrollStyle() {
