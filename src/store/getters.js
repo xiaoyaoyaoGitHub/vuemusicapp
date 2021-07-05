@@ -1,6 +1,6 @@
 const getters = {
     currentSong: state => {
-        return state.palyList[state.currentIndex]
+        return state.playList[state.currentIndex] || {}
     }
 }
 

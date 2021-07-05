@@ -36,7 +36,7 @@
 import { defineComponent } from 'vue'
 import Scroll from '@/components/scroll/scroll'
 import SongList from '@/components/base/song-list/song-list'
-import { SET_PLAY, SET_PLAY_RANDOM, SET_SEQUENCE_LIST } from '@/store/type'
+import { SET_PLAY, SET_PLAY_RANDOM, SET_SEQUENCE_LIST, SET_FULL_SCREEN } from '@/store/type'
 import { shuffle } from '@/assets/js/utils'
 import { mapActions } from 'vuex'
 const TOP_HEIGHT = 40
@@ -146,8 +146,7 @@ export default defineComponent({
       this.scrollY = -e.y // 保存滚动的高度
     },
     selectSong({ song, index }) {
-      this[SET_PLAY]({ song, index })
-      this[SET_SEQUENCE_LIST](this.songs)
+      this[SET_PLAY]({ songs: this.songs, index })
     },
     playRandom() {
       console.log(this.songs)
@@ -156,7 +155,8 @@ export default defineComponent({
     ...mapActions([
       SET_PLAY,
       SET_PLAY_RANDOM,
-      SET_SEQUENCE_LIST
+      SET_SEQUENCE_LIST,
+      SET_FULL_SCREEN
     ])
   }
 })

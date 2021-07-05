@@ -10,7 +10,7 @@ import {
 const mutations = {
     // 设置当前播放索引
     [SET_CURRENT_INDEX](state, currIndex) {
-        state.currIndex = currIndex
+        state.currentIndex = currIndex
     },
     // 设置是否全屏
     [SET_FULL_SCREEN](state, isFull) {

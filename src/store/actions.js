@@ -36,15 +36,19 @@ const actions = {
         commit(SET_PLAY_MODE, mode)
     },
     // 点击播放
-    [SET_PLAY]({ commit, state, dispatch }, { song, index }) {
-        dispatch(SET_PLAY_MODE, PLAY_MODE.random)
+    [SET_PLAY]({ commit, state, dispatch }, { songs, index }) {
+        dispatch(SET_PLAY_MODE, PLAY_MODE.sequence)
         dispatch(SET_CURRENT_INDEX, index)
+        dispatch(SET_PLAY_LIST, songs)
+        dispatch(SET_SEQUENCE_LIST, songs)
+        dispatch(SET_FULL_SCREEN, true)
     },
     // 点击随机播放
     [SET_PLAY_RANDOM]({ commit, state, dispatch }, songs) {
         dispatch(SET_PLAY_MODE, PLAY_MODE.random)
-        // dispatch(SET_SEQUENCE_LIST, songs)
         dispatch(SET_PLAY_LIST, songs)
+        dispatch(SET_CURRENT_INDEX, 0)
+        dispatch(SET_FULL_SCREEN, true)
     }
 }
 
