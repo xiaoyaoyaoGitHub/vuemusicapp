@@ -17,13 +17,13 @@
             <i class="icon-sequence"></i>
           </div>
           <div class="icon i-left">
-            <i class="icon-prev"></i>
+            <i @click="prev" class="icon-prev"></i>
           </div>
           <div class="icon i-center">
             <i @click="togglePlaying" :class="playIcons"></i>
           </div>
           <div class="icon i-right">
-            <i class="icon-next"></i>
+            <i @click="next" class="icon-next"></i>
           </div>
           <div class="icon i-right">
             <i class="icon-not-favorite"></i>
@@ -31,14 +31,18 @@
         </div>
       </div>
     </div>
-    <audio ref="audioRef"></audio>
+    <audio ref="audioRef" @pause="pause"></audio>
   </div>
 </template>
 
 <script>
 import { defineComponent, ref, computed, watch } from 'vue'
 import { useStore } from 'vuex'
-import { SET_FULL_SCREEN, SET_PLAYING_STATE } from '@/store/type'
+import {
+  SET_FULL_SCREEN,
+  SET_PLAYING_STATE,
+  SET_CURRENT_INDEX
+} from '@/store/type'
 export default defineComponent({
   name: 'player',
   setup() {
@@ -47,6 +51,8 @@ export default defineComponent({
     const fullScreen = computed(() => store.state.fullScreen)
     const currentSong = computed(() => store.getters.currentSong)
     const playing = computed(() => store.state.playing)
+    const currentIndex = computed(() => store.state.currentIndex)
+    const playLists = computed(() => store.state.playList)
 
     const audioRef = ref(null)
     const playIcons = computed(() => {
@@ -56,9 +62,12 @@ export default defineComponent({
     watch(currentSong, newSong => {
       const audioValue = audioRef.value
       audioValue.src = newSong.url
+      store.commit(SET_PLAYING_STATE, true)
+      audioRef.value.play()
     })
     watch(playing, newStatus => {
-        newStatus ? audioRef.value.play() : audioRef.value.pause()
+      console.log('playing', newStatus)
+      newStatus ? audioRef.value.play() : audioRef.value.pause()
     })
 
     function goBack() {
@@ -67,11 +76,56 @@ export default defineComponent({
     function togglePlaying() {
       store.dispatch(SET_PLAYING_STATE, !playing.value)
     }
+    function pause() {
+      store.dispatch(SET_PLAYING_STATE, false)
+    }
+    function prev() {
+      const lists = playLists.value
+      const listLength = lists.length
+      if (!listLength) {
+        return
+      }
+      if (listLength === 1) {
+        // 只有1首歌曲
+        loop()
+        return
+      }
+
+      const prevIndex =
+        currentIndex.value === 0 ? listLength - 1 : currentIndex.value - 1
+      store.commit(SET_CURRENT_INDEX, prevIndex)
+    }
+    function next() {
+      const lists = playLists.value
+      const listLength = lists.length
+      if (!listLength) {
+        return
+      }
+      if (listLength === 1) {
+        // 只有1首歌曲
+        loop()
+        return
+      }
+      //   store.dispatch(SET_PLAYING_STATE, false)
+      const nextIndex =
+        currentIndex.value === listLength - 1 ? 0 : currentIndex.value + 1
+      store.commit(SET_CURRENT_INDEX, nextIndex)
+    }
+    // 循环播放
+    function loop() {
+      const audioValue = audioRef.value
+      audioValue.currentTime = 0
+      audioValue.play()
+      store.commit(SET_PLAYING_STATE, true)
+    }
     return {
       currentSong,
       fullScreen,
       playIcons,
       goBack,
+      prev,
+      next,
+      pause,
       togglePlaying,
       audioRef
     }
