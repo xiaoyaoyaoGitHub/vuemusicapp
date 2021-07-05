@@ -16,13 +16,13 @@
           <div class="icon i-left">
             <i class="icon-sequence"></i>
           </div>
-          <div class="icon i-left">
+          <div class="icon i-left" :class="disabledClass">
             <i @click="prev" class="icon-prev"></i>
           </div>
-          <div class="icon i-center">
+          <div class="icon i-center" :class="disabledClass">
             <i @click="togglePlaying" :class="playIcons"></i>
           </div>
-          <div class="icon i-right">
+          <div class="icon i-right" :class="disabledClass">
             <i @click="next" class="icon-next"></i>
           </div>
           <div class="icon i-right">
@@ -31,7 +31,7 @@
         </div>
       </div>
     </div>
-    <audio ref="audioRef" @pause="pause"></audio>
+    <audio ref="audioRef" @pause="pause" @canplay="readPlay"></audio>
   </div>
 </template>
 
@@ -46,6 +46,8 @@ import {
 export default defineComponent({
   name: 'player',
   setup() {
+    const audioRef = ref(null)
+    const songPlay = ref(false)
     //   vuex
     const store = useStore()
     const fullScreen = computed(() => store.state.fullScreen)
@@ -53,20 +55,25 @@ export default defineComponent({
     const playing = computed(() => store.state.playing)
     const currentIndex = computed(() => store.state.currentIndex)
     const playLists = computed(() => store.state.playList)
-
-    const audioRef = ref(null)
     const playIcons = computed(() => {
       return playing.value ? 'icon-pause' : 'icon-play'
     })
+    const disabledClass = computed(() => {
+        return songPlay.value ? '' : 'disable'
+    })
 
     watch(currentSong, newSong => {
+        console.log('currentSong', newSong)
       const audioValue = audioRef.value
       audioValue.src = newSong.url
-      store.commit(SET_PLAYING_STATE, true)
+      songPlay.value = false
       audioRef.value.play()
+      store.commit(SET_PLAYING_STATE, true)
     })
     watch(playing, newStatus => {
-      console.log('playing', newStatus)
+      if (!songPlay.value) {
+          return
+        }
       newStatus ? audioRef.value.play() : audioRef.value.pause()
     })
 
@@ -74,15 +81,18 @@ export default defineComponent({
       store.dispatch(SET_FULL_SCREEN, false)
     }
     function togglePlaying() {
+        if (!songPlay.value) {
+          return
+        }
       store.dispatch(SET_PLAYING_STATE, !playing.value)
     }
-    function pause() {
+    function pause() { // 监听用户通过其他方式停止播放
       store.dispatch(SET_PLAYING_STATE, false)
     }
     function prev() {
       const lists = playLists.value
       const listLength = lists.length
-      if (!listLength) {
+      if (!songPlay.value || !listLength) {
         return
       }
       if (listLength === 1) {
@@ -98,7 +108,7 @@ export default defineComponent({
     function next() {
       const lists = playLists.value
       const listLength = lists.length
-      if (!listLength) {
+      if (!songPlay.value || !listLength) {
         return
       }
       if (listLength === 1) {
@@ -106,7 +116,6 @@ export default defineComponent({
         loop()
         return
       }
-      //   store.dispatch(SET_PLAYING_STATE, false)
       const nextIndex =
         currentIndex.value === listLength - 1 ? 0 : currentIndex.value + 1
       store.commit(SET_CURRENT_INDEX, nextIndex)
@@ -118,6 +127,14 @@ export default defineComponent({
       audioValue.play()
       store.commit(SET_PLAYING_STATE, true)
     }
+    // 监听播放
+    function readPlay() {
+        console.log('songPlay.value', songPlay.value)
+        if (songPlay.value) {
+            return
+        }
+        songPlay.value = true
+    }
     return {
       currentSong,
       fullScreen,
@@ -127,7 +144,9 @@ export default defineComponent({
       next,
       pause,
       togglePlaying,
-      audioRef
+      audioRef,
+      readPlay,
+      disabledClass
     }
   }
 })
