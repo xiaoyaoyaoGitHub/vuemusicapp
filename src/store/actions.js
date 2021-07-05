@@ -5,8 +5,10 @@ import {
     SET_CURRENT_INDEX,
     SET_FULL_SCREEN,
     SET_PLAY,
-    SET_PLAY_MODE
+    SET_PLAY_MODE,
+    SET_PLAY_RANDOM
 } from './type'
+import { PLAY_MODE } from '@/assets/js/constance'
 
 const actions = {
     // 设置播放状态
@@ -34,8 +36,15 @@ const actions = {
         commit(SET_PLAY_MODE, mode)
     },
     // 点击播放
-    [SET_PLAY]({ commit, state, dispatch }, { songs, index }) {
-        dispatch(SET_PLAY_MODE, 1)
+    [SET_PLAY]({ commit, state, dispatch }, { song, index }) {
+        dispatch(SET_PLAY_MODE, PLAY_MODE.random)
+        dispatch(SET_CURRENT_INDEX, index)
+    },
+    // 点击随机播放
+    [SET_PLAY_RANDOM]({ commit, state, dispatch }, songs) {
+        dispatch(SET_PLAY_MODE, PLAY_MODE.random)
+        // dispatch(SET_SEQUENCE_LIST, songs)
+        dispatch(SET_PLAY_LIST, songs)
     }
 }
 

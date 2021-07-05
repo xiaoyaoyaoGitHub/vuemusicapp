@@ -9,7 +9,7 @@
     <!-- 背景图 -->
     <div class="bg-image" :style="bgImageStyle" ref="bgImage">
       <!-- 播放按钮 -->
-      <div class="play-btn-wrapper">
+      <div class="play-btn-wrapper" @click="playRandom" :style="playStyle">
         <i class="icon-play"></i>
         <span class="text">随机播放全部</span>
       </div>
@@ -36,7 +36,8 @@
 import { defineComponent } from 'vue'
 import Scroll from '@/components/scroll/scroll'
 import SongList from '@/components/base/song-list/song-list'
-import { SET_PLAY } from '@/store/type'
+import { SET_PLAY, SET_PLAY_RANDOM, SET_SEQUENCE_LIST } from '@/store/type'
+import { shuffle } from '@/assets/js/utils'
 import { mapActions } from 'vuex'
 const TOP_HEIGHT = 40
 export default defineComponent({
@@ -80,6 +81,15 @@ export default defineComponent({
   computed: {
     noResult() {
       return !this.loading && !this.songs.length
+    },
+    playStyle() {
+      let display = ''
+      if (this.scrollY > this.maxTranslateY) {
+        display = 'none'
+      }
+      return {
+        display
+      }
     },
     bgImageStyle() {
       const scrollY = this.scrollY
@@ -136,10 +146,17 @@ export default defineComponent({
       this.scrollY = -e.y // 保存滚动的高度
     },
     selectSong({ song, index }) {
-      this[SET_PLAY](song, index)
+      this[SET_PLAY]({ song, index })
+      this[SET_SEQUENCE_LIST](this.songs)
+    },
+    playRandom() {
+      console.log(this.songs)
+      this[SET_PLAY_RANDOM](shuffle(this.songs))
     },
     ...mapActions([
-      SET_PLAY
+      SET_PLAY,
+      SET_PLAY_RANDOM,
+      SET_SEQUENCE_LIST
     ])
   }
 })
