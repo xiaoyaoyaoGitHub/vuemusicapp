@@ -14,7 +14,7 @@
       <div class="bottom">
         <div class="operators">
           <div class="icon i-left">
-            <i class="icon-sequence"></i>
+            <i @click="changeMode" :class="modeIcon"></i>
           </div>
           <div class="icon i-left" :class="disabledClass">
             <i @click="prev" class="icon-prev"></i>
@@ -38,6 +38,7 @@
 <script>
 import { defineComponent, ref, computed, watch } from 'vue'
 import { useStore } from 'vuex'
+import useMode from './use-mode'
 import {
   SET_FULL_SCREEN,
   SET_PLAYING_STATE,
@@ -59,11 +60,14 @@ export default defineComponent({
       return playing.value ? 'icon-pause' : 'icon-play'
     })
     const disabledClass = computed(() => {
-        return songPlay.value ? '' : 'disable'
+      return songPlay.value ? '' : 'disable'
     })
+    // hooks
+    const { modeIcon, changeMode } = useMode()
 
+    // watch
     watch(currentSong, newSong => {
-        console.log('currentSong', newSong)
+      console.log('currentSong', newSong)
       const audioValue = audioRef.value
       audioValue.src = newSong.url
       songPlay.value = false
@@ -72,8 +76,8 @@ export default defineComponent({
     })
     watch(playing, newStatus => {
       if (!songPlay.value) {
-          return
-        }
+        return
+      }
       newStatus ? audioRef.value.play() : audioRef.value.pause()
     })
 
@@ -81,12 +85,13 @@ export default defineComponent({
       store.dispatch(SET_FULL_SCREEN, false)
     }
     function togglePlaying() {
-        if (!songPlay.value) {
-          return
-        }
+      if (!songPlay.value) {
+        return
+      }
       store.dispatch(SET_PLAYING_STATE, !playing.value)
     }
-    function pause() { // 监听用户通过其他方式停止播放
+    function pause() {
+      // 监听用户通过其他方式停止播放
       store.dispatch(SET_PLAYING_STATE, false)
     }
     function prev() {
@@ -129,11 +134,11 @@ export default defineComponent({
     }
     // 监听播放
     function readPlay() {
-        console.log('songPlay.value', songPlay.value)
-        if (songPlay.value) {
-            return
-        }
-        songPlay.value = true
+      console.log('songPlay.value', songPlay.value)
+      if (songPlay.value) {
+        return
+      }
+      songPlay.value = true
     }
     return {
       currentSong,
@@ -146,7 +151,9 @@ export default defineComponent({
       togglePlaying,
       audioRef,
       readPlay,
-      disabledClass
+      disabledClass,
+      modeIcon,
+      changeMode
     }
   }
 })

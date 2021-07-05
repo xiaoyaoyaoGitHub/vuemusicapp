@@ -150,7 +150,7 @@ export default defineComponent({
     },
     playRandom() {
       console.log(this.songs)
-      this[SET_PLAY_RANDOM](shuffle(this.songs))
+      this[SET_PLAY_RANDOM](this.songs)
     },
     ...mapActions([
       SET_PLAY,

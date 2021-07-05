@@ -8,6 +8,7 @@ import {
     SET_PLAY_MODE,
     SET_PLAY_RANDOM
 } from './type'
+import { shuffle } from '@/assets/js/utils'
 import { PLAY_MODE } from '@/assets/js/constance'
 
 const actions = {
@@ -32,7 +33,17 @@ const actions = {
         commit(SET_FULL_SCREEN, isFull)
     },
     // 设置播放模式
-    [SET_PLAY_MODE]({ commit, state }, mode) {
+    [SET_PLAY_MODE]({ commit, state, getters }, mode) {
+        const currentId = getters.currentSong.id // 保存当前的songid
+        if (mode === PLAY_MODE.random) { // 随机播放 洗牌
+            commit(SET_PLAY_LIST, shuffle(state.sequenceList))
+        } else {
+            commit(SET_PLAY_LIST, state.sequenceList)
+        }
+        const index = state.playList.findIndex(song => { // 当前播放歌曲在播放列表中的索引值
+            return song.id === currentId
+        })
+        commit(SET_CURRENT_INDEX, index)
         commit(SET_PLAY_MODE, mode)
     },
     // 点击播放
@@ -46,7 +57,8 @@ const actions = {
     // 点击随机播放
     [SET_PLAY_RANDOM]({ commit, state, dispatch }, songs) {
         dispatch(SET_PLAY_MODE, PLAY_MODE.random)
-        dispatch(SET_PLAY_LIST, songs)
+        dispatch(SET_SEQUENCE_LIST, songs)
+        dispatch(SET_PLAY_LIST, shuffle(songs)) // 在此处洗牌
         dispatch(SET_CURRENT_INDEX, 0)
         dispatch(SET_FULL_SCREEN, true)
     }
