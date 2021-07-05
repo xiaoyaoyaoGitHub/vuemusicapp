@@ -11,39 +11,68 @@
         <h1 class="title">{{ currentSong.name }}</h1>
         <h2 class="subtitle">{{ currentSong.singer }}</h2>
       </div>
+      <div class="bottom">
+        <div class="operators">
+          <div class="icon i-left">
+            <i class="icon-sequence"></i>
+          </div>
+          <div class="icon i-left">
+            <i class="icon-prev"></i>
+          </div>
+          <div class="icon i-center">
+            <i @click="togglePlaying" :class="playIcons"></i>
+          </div>
+          <div class="icon i-right">
+            <i class="icon-next"></i>
+          </div>
+          <div class="icon i-right">
+            <i class="icon-not-favorite"></i>
+          </div>
+        </div>
+      </div>
     </div>
-    <audio
-      ref="audioRef"
-    ></audio>
+    <audio ref="audioRef"></audio>
   </div>
 </template>
 
 <script>
 import { defineComponent, ref, computed, watch } from 'vue'
 import { useStore } from 'vuex'
-import { SET_FULL_SCREEN } from '@/store/type'
+import { SET_FULL_SCREEN, SET_PLAYING_STATE } from '@/store/type'
 export default defineComponent({
   name: 'player',
   setup() {
-     const audioRef = ref(null)
     //   vuex
     const store = useStore()
     const fullScreen = computed(() => store.state.fullScreen)
     const currentSong = computed(() => store.getters.currentSong)
+    const playing = computed(() => store.state.playing)
 
-    watch(currentSong, (newSong) => {
-        const audioValue = audioRef.value
-        audioValue.src = newSong.url
-        audioValue.play()
+    const audioRef = ref(null)
+    const playIcons = computed(() => {
+      return playing.value ? 'icon-pause' : 'icon-play'
+    })
+
+    watch(currentSong, newSong => {
+      const audioValue = audioRef.value
+      audioValue.src = newSong.url
+    })
+    watch(playing, newStatus => {
+        newStatus ? audioRef.value.play() : audioRef.value.pause()
     })
 
     function goBack() {
       store.dispatch(SET_FULL_SCREEN, false)
     }
+    function togglePlaying() {
+      store.dispatch(SET_PLAYING_STATE, !playing.value)
+    }
     return {
       currentSong,
       fullScreen,
+      playIcons,
       goBack,
+      togglePlaying,
       audioRef
     }
   }
