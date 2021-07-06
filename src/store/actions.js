@@ -6,7 +6,8 @@ import {
     SET_FULL_SCREEN,
     SET_PLAY,
     SET_PLAY_MODE,
-    SET_PLAY_RANDOM
+    SET_PLAY_RANDOM,
+    SET_FAVORITE_LIST
 } from './type'
 import { shuffle } from '@/assets/js/utils'
 import { PLAY_MODE } from '@/assets/js/constance'
@@ -61,6 +62,10 @@ const actions = {
         dispatch(SET_PLAY_LIST, shuffle(songs)) // 在此处洗牌
         dispatch(SET_CURRENT_INDEX, 0)
         dispatch(SET_FULL_SCREEN, true)
+    },
+    // 设置收藏列表
+    [SET_FAVORITE_LIST]({ commit, state, dispatch }, lists) {
+        commit(SET_FAVORITE_LIST, lists)
     }
 }
 

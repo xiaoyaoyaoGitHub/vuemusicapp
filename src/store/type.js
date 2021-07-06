@@ -6,3 +6,4 @@ export const SET_CURRENT_INDEX = 'SET_CURRENT_INDEX' // 修改当前索引
 export const SET_FULL_SCREEN = 'SET_FULL_SCREEN' // 设置全屏
 export const SET_PLAY = 'SET_PLAY' // 点击播放
 export const SET_PLAY_RANDOM = 'SET_PLAY_RANDOM' // 点击随机播放
+export const SET_FAVORITE_LIST = 'SET_FAVORITE_LIST' // 设置收藏列表

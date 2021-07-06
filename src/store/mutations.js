@@ -4,7 +4,8 @@ import {
     SET_PLAY_LIST,
     SET_SEQUENCE_LIST,
     SET_PLAYING_STATE,
-    SET_PLAY_MODE
+    SET_PLAY_MODE,
+    SET_FAVORITE_LIST
 } from './type'
 
 const mutations = {
@@ -31,6 +32,10 @@ const mutations = {
     // 设置播放模式
     [SET_PLAY_MODE](state, mode) {
         state.playMode = mode
+    },
+    // 设置收藏列表
+    [SET_FAVORITE_LIST](state, lists) {
+        state.favoriteList = lists
     }
 }
 
