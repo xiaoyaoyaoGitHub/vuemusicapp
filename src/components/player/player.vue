@@ -11,7 +11,18 @@
         <h1 class="title">{{ currentSong.name }}</h1>
         <h2 class="subtitle">{{ currentSong.singer }}</h2>
       </div>
+
+      <!-- 底部 -->
       <div class="bottom">
+        <!-- 进度条 -->
+        <div class="progress-wrapper">
+          <span class="time time-l">{{formatTimes(currentTime)}}</span>
+          <div class="progress-bar-wrapper">
+            <progress-bar :progress="progress"></progress-bar>
+          </div>
+          <span class="time time-r">{{formatTimes(currentSong.duration)}}</span>
+        </div>
+        <!-- 状态切换 -->
         <div class="operators">
           <div class="icon i-left">
             <i @click="changeMode" :class="modeIcon"></i>
@@ -31,15 +42,17 @@
         </div>
       </div>
     </div>
-    <audio ref="audioRef" @pause="pause" @canplay="readPlay"></audio>
+    <audio ref="audioRef" @pause="pause" @canplay="readPlay" @timeupdate="updateTime"></audio>
   </div>
 </template>
 
 <script>
 import { defineComponent, ref, computed, watch } from 'vue'
 import { useStore } from 'vuex'
+import ProgressBar from './progress-bar.vue'
 import useMode from './use-mode'
 import useFavorite from './use-favorite'
+import { formatTimes } from '@/assets/js/utils'
 import {
   SET_FULL_SCREEN,
   SET_PLAYING_STATE,
@@ -47,9 +60,13 @@ import {
 } from '@/store/type'
 export default defineComponent({
   name: 'player',
+  components: {
+    ProgressBar
+  },
   setup() {
     const audioRef = ref(null)
     const songPlay = ref(false)
+    const currentTime = ref(0) // 当前播放时长
     //   vuex
     const store = useStore()
     const fullScreen = computed(() => store.state.fullScreen)
@@ -62,6 +79,10 @@ export default defineComponent({
     })
     const disabledClass = computed(() => {
       return songPlay.value ? '' : 'disable'
+    })
+    // 进度条进度
+    const progress = computed(() => {
+      return currentTime.value / currentSong.value.duration
     })
     // hooks
     const { modeIcon, changeMode } = useMode()
@@ -141,6 +162,10 @@ export default defineComponent({
       }
       songPlay.value = true
     }
+    // 监听时长
+    function updateTime(e) {
+      currentTime.value = e.target.currentTime
+    }
     return {
       currentSong,
       fullScreen,
@@ -153,6 +178,10 @@ export default defineComponent({
       audioRef,
       readPlay,
       disabledClass,
+      currentTime,
+      updateTime,
+      formatTimes,
+      progress,
       // mode
       modeIcon,
       changeMode,

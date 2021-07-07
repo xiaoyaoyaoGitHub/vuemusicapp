@@ -21,3 +21,11 @@ function swap(arrs, i, j) {
     arrs[i] = arrs[j]
     arrs[j] = t
 }
+
+// 格式化时长 单位 s
+export function formatTimes(times) {
+    const interval = times | 0 // 向下取整
+    const minutes = ((interval / 60 | 0) + '').padStart(2, '0')
+    const seconds = ((interval % 60 | 0) + '').padStart(2, '0')
+    return `${minutes}:${seconds}`
+}

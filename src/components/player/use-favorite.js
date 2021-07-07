@@ -30,10 +30,7 @@ export default function useFavorite() {
 
     // 判断是否是收藏歌曲
     const isFavorite = (song) => {
-        console.log('currentSong', song)
-        console.log('favoriteList', favoriteList)
         return favoriteList.value.findIndex(item => {
-            console.log('findIndex', item)
             return song.id === item.id
         }) >= 0
     }
