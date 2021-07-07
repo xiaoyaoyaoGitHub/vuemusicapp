@@ -18,7 +18,7 @@
         <div class="progress-wrapper">
           <span class="time time-l">{{formatTimes(currentTime)}}</span>
           <div class="progress-bar-wrapper">
-            <progress-bar :progress="progress"></progress-bar>
+            <progress-bar :progress="progress" @progrese-change="progressChange"></progress-bar>
           </div>
           <span class="time time-r">{{formatTimes(currentSong.duration)}}</span>
         </div>
@@ -42,7 +42,7 @@
         </div>
       </div>
     </div>
-    <audio ref="audioRef" @pause="pause" @canplay="readPlay" @timeupdate="updateTime"></audio>
+    <audio ref="audioRef" @pause="pause" @canplay="readPlay" @timeupdate="updateTime" @ended="end"></audio>
   </div>
 </template>
 
@@ -53,6 +53,7 @@ import ProgressBar from './progress-bar.vue'
 import useMode from './use-mode'
 import useFavorite from './use-favorite'
 import { formatTimes } from '@/assets/js/utils'
+import { PLAY_MODE } from '@/assets/js/constance'
 import {
   SET_FULL_SCREEN,
   SET_PLAYING_STATE,
@@ -85,7 +86,7 @@ export default defineComponent({
       return currentTime.value / currentSong.value.duration
     })
     // hooks
-    const { modeIcon, changeMode } = useMode()
+    const { modeIcon, changeMode, playMode } = useMode()
     const { getFavoriteIcon, toggleFavorite } = useFavorite()
     // watch
     watch(currentSong, newSong => {
@@ -166,6 +167,21 @@ export default defineComponent({
     function updateTime(e) {
       currentTime.value = e.target.currentTime
     }
+    // 进度条
+    function progressChange(progress) {
+      const audioRefValue = audioRef.value
+      audioRefValue.currentTime = currentTime.value = audioRefValue.duration * progress
+    }
+    function end(e) {
+      if (e.target.currentTime === audioRef.value.duration) { // 结束
+        if (playMode.value === PLAY_MODE.loop) { // 循环播放
+            loop()
+        } else {
+          next()
+        }
+      }
+    }
+
     return {
       currentSong,
       fullScreen,
@@ -187,7 +203,10 @@ export default defineComponent({
       changeMode,
       // favorite
       getFavoriteIcon,
-      toggleFavorite
+      toggleFavorite,
+      // progress
+      progressChange,
+      end
     }
   }
 })

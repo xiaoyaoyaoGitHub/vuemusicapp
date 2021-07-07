@@ -15,5 +15,5 @@ export default function useMode() {
         store.dispatch(SET_PLAY_MODE, mode)
     }
 
-    return { modeIcon, changeMode }
+    return { modeIcon, changeMode, playMode }
 }
