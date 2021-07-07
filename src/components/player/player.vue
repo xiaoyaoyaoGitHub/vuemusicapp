@@ -11,7 +11,16 @@
         <h1 class="title">{{ currentSong.name }}</h1>
         <h2 class="subtitle">{{ currentSong.singer }}</h2>
       </div>
-
+      <!-- cd 和 歌词 -->
+      <div class="middle">
+        <div class="middle-l">
+          <div class="cd-wrapper">
+            <div class="cd" ref="cdWrapper">
+              <img :src="currentSong.pic" ref="cdImage" alt="" class="image" :class="cdClass"/>
+            </div>
+          </div>
+        </div>
+      </div>
       <!-- 底部 -->
       <div class="bottom">
         <!-- 进度条 -->
@@ -51,6 +60,7 @@ import { defineComponent, ref, computed, watch } from 'vue'
 import { useStore } from 'vuex'
 import ProgressBar from './progress-bar.vue'
 import useMode from './use-mode'
+import useCd from './use-cd'
 import useFavorite from './use-favorite'
 import { formatTimes } from '@/assets/js/utils'
 import { PLAY_MODE } from '@/assets/js/constance'
@@ -88,6 +98,7 @@ export default defineComponent({
     // hooks
     const { modeIcon, changeMode, playMode } = useMode()
     const { getFavoriteIcon, toggleFavorite } = useFavorite()
+    const { cdClass, cdWrapper, cdImage } = useCd()
     // watch
     watch(currentSong, newSong => {
       console.log('currentSong', newSong)
@@ -206,7 +217,11 @@ export default defineComponent({
       toggleFavorite,
       // progress
       progressChange,
-      end
+      end,
+      // cd
+      cdClass,
+      cdWrapper,
+      cdImage
     }
   }
 })
