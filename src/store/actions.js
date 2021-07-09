@@ -7,7 +7,8 @@ import {
     SET_PLAY,
     SET_PLAY_MODE,
     SET_PLAY_RANDOM,
-    SET_FAVORITE_LIST
+    SET_FAVORITE_LIST,
+    ADD_SONG_LYRIC
 } from './type'
 import { shuffle } from '@/assets/js/utils'
 import { PLAY_MODE } from '@/assets/js/constance'
@@ -66,6 +67,10 @@ const actions = {
     // 设置收藏列表
     [SET_FAVORITE_LIST]({ commit, state, dispatch }, lists) {
         commit(SET_FAVORITE_LIST, lists)
+    },
+    // 设置歌词
+    [ADD_SONG_LYRIC]({ commit }, { song, lyric }) {
+        commit(ADD_SONG_LYRIC, { song, lyric })
     }
 }
 

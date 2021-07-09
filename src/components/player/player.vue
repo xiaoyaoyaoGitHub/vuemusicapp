@@ -61,6 +61,7 @@ import { useStore } from 'vuex'
 import ProgressBar from './progress-bar.vue'
 import useMode from './use-mode'
 import useCd from './use-cd'
+import useLyric from './use-lyric'
 import useFavorite from './use-favorite'
 import { formatTimes } from '@/assets/js/utils'
 import { PLAY_MODE } from '@/assets/js/constance'
@@ -99,6 +100,7 @@ export default defineComponent({
     const { modeIcon, changeMode, playMode } = useMode()
     const { getFavoriteIcon, toggleFavorite } = useFavorite()
     const { cdClass, cdWrapper, cdImage } = useCd()
+    useLyric()
     // watch
     watch(currentSong, newSong => {
       console.log('currentSong', newSong)

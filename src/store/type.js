@@ -7,3 +7,4 @@ export const SET_FULL_SCREEN = 'SET_FULL_SCREEN' // 设置全屏
 export const SET_PLAY = 'SET_PLAY' // 点击播放
 export const SET_PLAY_RANDOM = 'SET_PLAY_RANDOM' // 点击随机播放
 export const SET_FAVORITE_LIST = 'SET_FAVORITE_LIST' // 设置收藏列表
+export const ADD_SONG_LYRIC = 'ADD_SONG_LYRIC' // 为当前歌曲增加歌词属性

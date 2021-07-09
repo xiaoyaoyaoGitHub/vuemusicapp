@@ -5,7 +5,8 @@ import {
     SET_SEQUENCE_LIST,
     SET_PLAYING_STATE,
     SET_PLAY_MODE,
-    SET_FAVORITE_LIST
+    SET_FAVORITE_LIST,
+    ADD_SONG_LYRIC
 } from './type'
 
 const mutations = {
@@ -36,6 +37,17 @@ const mutations = {
     // 设置收藏列表
     [SET_FAVORITE_LIST](state, lists) {
         state.favoriteList = lists
+    },
+    // 设置歌词
+    [ADD_SONG_LYRIC](state, { song, lyric }) {
+        // state.getters.currentSong.lyric = lyric;
+        const sequenceList = state.sequenceList
+        sequenceList.map(item => {
+            if (item.mid === song.mid) {
+                item.lyric = lyric
+            };
+            return item
+        })
     }
 }
 
