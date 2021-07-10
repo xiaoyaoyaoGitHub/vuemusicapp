@@ -12,15 +12,15 @@
           />
         </div>
       </div>
-      <!-- <div ref="sliderWrapperRef" class="slider-wrapper">
+      <div ref="sliderWrapperRef" class="slider-wrapper">
         <div class="slider-group">
-          <div class="slider-page" v-for="song in playlist" :key="song.id">
-            <h2 class="name">{{ song.name }}</h2>
-            <p class="desc">{{ song.singer }}</p>
+          <div class="slider-page">
+            <h2 class="name">{{ currentSong.name }}</h2>
+            <p class="desc">{{ currentSong.singer }}</p>
           </div>
         </div>
-      </div> -->
-      <!-- <div class="control">
+      </div>
+      <div class="control">
         <progress-circle :radius="32" :progress="progress">
           <i
             class="icon-mini"
@@ -29,7 +29,7 @@
           ></i>
         </progress-circle>
       </div>
-      <div class="control" @click.stop="showPlaylist">
+      <!-- <div class="control" @click.stop="showPlaylist">
         <i class="icon-playlist"></i>
       </div>
       <playlist ref="playlistRef"></playlist> -->
@@ -41,13 +41,29 @@
 import { defineComponent, computed } from 'vue'
 import { useStore } from 'vuex'
 import useCd from './use-cd'
+import ProgressCircle from './progress-circle.vue'
 import { SET_FULL_SCREEN } from '@/store/type'
 export default defineComponent({
     name: 'mini-player',
+    components: {
+        ProgressCircle
+    },
+    props: {
+        progress: {
+            type: Number,
+            default: 0
+        },
+        togglePlay: Function
+    },
     setup() {
         const store = useStore()
         const fullScreen = computed(() => store.state.fullScreen)
         const currentSong = computed(() => store.getters.currentSong)
+        const playing = computed(() => store.state.playing)
+        const playlist = computed(() => store.state.playlist)
+        const miniPlayIcon = computed(() => {
+            return playing.value ? 'icon-pause-mini' : 'icon-play-mini'
+        })
         const { cdClass, cdWrapper, cdImage } = useCd()
 
         function showNormalPlayer() {
@@ -58,7 +74,9 @@ export default defineComponent({
             currentSong,
             cdClass,
             cdWrapper,
+            playlist,
             cdImage,
+            miniPlayIcon,
             showNormalPlayer
         }
     }
