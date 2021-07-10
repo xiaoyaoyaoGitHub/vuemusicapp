@@ -13,13 +13,31 @@
       </div>
       <!-- cd 和 歌词 -->
       <div class="middle">
-        <div class="middle-l">
+        <div class="middle-l" v-show="!currentLyric">
+          <!-- cd -->
           <div class="cd-wrapper">
             <div class="cd" ref="cdWrapper">
               <img :src="currentSong.pic" ref="cdImage" alt="" class="image" :class="cdClass"/>
             </div>
           </div>
+           <!-- lyric -->
+           <div class="playing-lyric-wrapper">
+             <div class="playing-lyric"></div>
+           </div>
         </div>
+        <scroll ref="lyricScrollRef" class="middle-r" v-if="currentLyric">
+          <div class="lyric-wrapper">
+            <div ref="lyricListRef">
+              <p class="text" v-for="(line, index) in currentLyric.lines"
+                  :key="line.num"
+                  :class="{'current': currentLineNum === index}"
+                >
+                  {{line.txt}}
+
+              </p>
+            </div>
+          </div>
+        </scroll>
       </div>
       <!-- 底部 -->
       <div class="bottom">
@@ -59,6 +77,7 @@
 import { defineComponent, ref, computed, watch } from 'vue'
 import { useStore } from 'vuex'
 import ProgressBar from './progress-bar.vue'
+import Scroll from '@/components/scroll/scroll.vue'
 import useMode from './use-mode'
 import useCd from './use-cd'
 import useLyric from './use-lyric'
@@ -73,7 +92,8 @@ import {
 export default defineComponent({
   name: 'player',
   components: {
-    ProgressBar
+    ProgressBar,
+    Scroll
   },
   setup() {
     const audioRef = ref(null)
@@ -100,10 +120,9 @@ export default defineComponent({
     const { modeIcon, changeMode, playMode } = useMode()
     const { getFavoriteIcon, toggleFavorite } = useFavorite()
     const { cdClass, cdWrapper, cdImage } = useCd()
-    useLyric()
+    const { currentLyric, playLyric, stopLyric, currentLineNum, lyricScrollRef, lyricListRef } = useLyric({ currentTime, songPlay })
     // watch
     watch(currentSong, newSong => {
-      console.log('currentSong', newSong)
       const audioValue = audioRef.value
       audioValue.src = newSong.url
       songPlay.value = false
@@ -114,7 +133,15 @@ export default defineComponent({
       if (!songPlay.value) {
         return
       }
-      newStatus ? audioRef.value.play() : audioRef.value.pause()
+      const audioRefVal = audioRef.value
+      if (newStatus) {
+        console.log('newStatus', newStatus)
+        audioRefVal.play()
+        playLyric()
+      } else {
+        audioRefVal.pause()
+        stopLyric()
+      }
     })
 
     function goBack() {
@@ -179,11 +206,13 @@ export default defineComponent({
     // 监听时长
     function updateTime(e) {
       currentTime.value = e.target.currentTime
+      playLyric()
     }
     // 进度条
     function progressChange(progress) {
       const audioRefValue = audioRef.value
       audioRefValue.currentTime = currentTime.value = audioRefValue.duration * progress
+      playLyric()
     }
     function end(e) {
       if (e.target.currentTime === audioRef.value.duration) { // 结束
@@ -223,7 +252,12 @@ export default defineComponent({
       // cd
       cdClass,
       cdWrapper,
-      cdImage
+      cdImage,
+      // lyric
+      currentLyric,
+      currentLineNum,
+      lyricScrollRef,
+      lyricListRef
     }
   }
 })
