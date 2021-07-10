@@ -13,7 +13,7 @@
       </div>
       <!-- cd 和 歌词 -->
       <div class="middle">
-        <div class="middle-l" v-show="!currentLyric">
+        <div class="middle-l">
           <!-- cd -->
           <div class="cd-wrapper">
             <div class="cd" ref="cdWrapper">
@@ -22,18 +22,24 @@
           </div>
            <!-- lyric -->
            <div class="playing-lyric-wrapper">
-             <div class="playing-lyric"></div>
+             <div class="playing-lyric">{{playingLyric}}</div>
            </div>
         </div>
-        <scroll ref="lyricScrollRef" class="middle-r" v-if="currentLyric">
-          <div class="lyric-wrapper">
-            <div ref="lyricListRef">
+        <scroll ref="lyricScrollRef" class="middle-r" >
+          <div class="lyric-wrapper" >
+            <div ref="lyricListRef" v-if="currentLyric">
               <p class="text" v-for="(line, index) in currentLyric.lines"
                   :key="line.num"
                   :class="{'current': currentLineNum === index}"
                 >
                   {{line.txt}}
 
+              </p>
+            </div>
+            <!-- 无歌词 -->
+            <div class="pure-music">
+              <p>
+                {{pureMusicLyric}}
               </p>
             </div>
           </div>
@@ -120,7 +126,7 @@ export default defineComponent({
     const { modeIcon, changeMode, playMode } = useMode()
     const { getFavoriteIcon, toggleFavorite } = useFavorite()
     const { cdClass, cdWrapper, cdImage } = useCd()
-    const { currentLyric, playLyric, stopLyric, currentLineNum, lyricScrollRef, lyricListRef } = useLyric({ currentTime, songPlay })
+    const { currentLyric, playLyric, stopLyric, currentLineNum, lyricScrollRef, lyricListRef, pureMusicLyric, playingLyric } = useLyric({ currentTime, songPlay })
     // watch
     watch(currentSong, newSong => {
       const audioValue = audioRef.value
@@ -257,7 +263,9 @@ export default defineComponent({
       currentLyric,
       currentLineNum,
       lyricScrollRef,
-      lyricListRef
+      lyricListRef,
+      pureMusicLyric,
+      playingLyric
     }
   }
 })

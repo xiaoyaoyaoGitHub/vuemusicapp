@@ -9,6 +9,8 @@ export default function useLyric({ currentTime, songPlay }) {
     const currentLineNum = ref(0) // 当前歌词播放行数
     const lyricScrollRef = ref(null) // 歌词scroll实例
     const lyricListRef = ref(null) // 歌词列表实例
+    const pureMusicLyric = ref('') // 无歌词
+    const playingLyric = ref('') // 当前播放歌词
     const currentSong = computed(() => store.getters.currentSong)
     const playing = computed(() => store.state.playing)
     watch(currentSong, async (newSong) => {
@@ -19,11 +21,17 @@ export default function useLyric({ currentTime, songPlay }) {
         if (currentSong.value.lyric !== lyric) {
             return
         }
-        if (songPlay.value) {
-            playLyric()
-        }
+        pureMusicLyric.value = ''
         currentLineNum.value = 0
         currentLyric.value = new Lyric(lyric, handleLyric)
+        const hasLyric = currentLyric.value.lines
+        if (hasLyric) { // 有歌词
+            if (songPlay.value) {
+                playLyric()
+            }
+        } else {
+            pureMusicLyric.value = currentLyric.value.replace(/[(\d{2}):(/d{2}):(/d{2})]/, '')
+        }
     })
 
     // 播放歌词
@@ -46,15 +54,15 @@ export default function useLyric({ currentTime, songPlay }) {
     }
 
     // 监听歌词播放
-    function handleLyric({ lineNum }) {
+    function handleLyric({ lineNum, txt }) {
         console.log('lineNum', lineNum)
-
         const lyricScrollRefVal = lyricScrollRef.value
         const lyricListRefVal = lyricListRef.value
         if (!lyricListRefVal || !playing.value) { // 还没有渲染则不触发
             return
         }
         currentLineNum.value = lineNum
+        playingLyric.value = txt
         if (lineNum > 5) {
             const lyricCurrentEl = lyricListRefVal.children[lineNum - 5]
             lyricScrollRefVal.scroll.scrollToElement(lyricCurrentEl, 1000)
@@ -69,6 +77,8 @@ export default function useLyric({ currentTime, songPlay }) {
         stopLyric,
         currentLineNum,
         lyricScrollRef,
-        lyricListRef
+        lyricListRef,
+        pureMusicLyric,
+        playingLyric
     }
 }
