@@ -7,15 +7,28 @@ export default function useMiddleInteractive() {
     const touch = {}
     function onTouchStart(e) {
         touch.startX = e.touches[0].pageX // 保存touch开始位置
+        touch.startY = e.touches[0].pageY
+        touch.directionLocked = ''
     }
 
     function onTouchMove(e) {
         const currentPageX = e.touches[0].pageX // 当前位置
+        const currentPageY = e.touches[0].pageY
+
         const deltaX = currentPageX - touch.startX // 偏移量
+        const deltaY = currentPageY - touch.startY
+
+        if (!touch.directionLocked) {
+            touch.directionLocked = Math.abs(deltaX) >= Math.abs(deltaY) ? 'h' : 'v'
+        }
+
+        if (touch.directionLocked === 'v') {
+            return
+        }
+
         const lyricLeft = currentView === 'cd' ? '0' : -window.innerWidth // 默认是在视图外侧
         const offsetLeft = Math.min(0, Math.max(lyricLeft - 0 + deltaX, -window.innerWidth))
         touch.precent = Math.abs(offsetLeft / window.innerWidth) // 移动百分比 //取绝对值
-        console.log(touch.precent)
         if (currentView === 'cd') {
             if (touch.precent > 0.2) { // 移动距离超过20%
                 currentShow.value = 'lyric'
