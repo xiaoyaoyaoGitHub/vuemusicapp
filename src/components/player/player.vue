@@ -1,5 +1,5 @@
 <template>
-  <div class="player">
+  <div class="player" v-show="playLists.length">
     <div class="normal-player" v-show="fullScreen">
       <div class="background">
         <img :src="currentSong.pic" />
@@ -80,6 +80,7 @@
         </div>
       </div>
     </div>
+    <mini-player></mini-player>
     <audio ref="audioRef" @pause="pause" @canplay="readPlay" @timeupdate="updateTime" @ended="end"></audio>
   </div>
 </template>
@@ -89,6 +90,7 @@ import { defineComponent, ref, computed, watch } from 'vue'
 import { useStore } from 'vuex'
 import ProgressBar from './progress-bar.vue'
 import Scroll from '@/components/scroll/scroll.vue'
+import MiniPlayer from './mini-player.vue'
 import useMode from './use-mode'
 import useCd from './use-cd'
 import useLyric from './use-lyric'
@@ -105,7 +107,8 @@ export default defineComponent({
   name: 'player',
   components: {
     ProgressBar,
-    Scroll
+    Scroll,
+    MiniPlayer
   },
   setup() {
     const audioRef = ref(null)
@@ -240,6 +243,7 @@ export default defineComponent({
       currentSong,
       fullScreen,
       playIcons,
+      playLists,
       goBack,
       prev,
       next,
