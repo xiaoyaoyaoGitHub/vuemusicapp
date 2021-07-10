@@ -12,8 +12,8 @@
         <h2 class="subtitle">{{ currentSong.singer }}</h2>
       </div>
       <!-- cd 和 歌词 -->
-      <div class="middle">
-        <div class="middle-l">
+      <div class="middle" @touchstart.prevent="onTouchStart" @touchmove.prevent="onTouchMove" @touchend.prevent="onTouchEnd">
+        <div :style="middleLStyle" class="middle-l">
           <!-- cd -->
           <div class="cd-wrapper">
             <div class="cd" ref="cdWrapper">
@@ -25,7 +25,7 @@
              <div class="playing-lyric">{{playingLyric}}</div>
            </div>
         </div>
-        <scroll ref="lyricScrollRef" class="middle-r" >
+        <scroll :style="middleRStyle" ref="lyricScrollRef" class="middle-r" >
           <div class="lyric-wrapper" >
             <div ref="lyricListRef" v-if="currentLyric">
               <p class="text" v-for="(line, index) in currentLyric.lines"
@@ -47,6 +47,11 @@
       </div>
       <!-- 底部 -->
       <div class="bottom">
+        <!-- 切换点 -->
+        <div class="dot-wrapper">
+            <span class="dot" :class="{'active':currentShow==='cd'}"></span>
+            <span class="dot" :class="{'active':currentShow==='lyric'}"></span>
+          </div>
         <!-- 进度条 -->
         <div class="progress-wrapper">
           <span class="time time-l">{{formatTimes(currentTime)}}</span>
@@ -87,6 +92,7 @@ import Scroll from '@/components/scroll/scroll.vue'
 import useMode from './use-mode'
 import useCd from './use-cd'
 import useLyric from './use-lyric'
+import useMiddleInteractive from './use-middle-interactive'
 import useFavorite from './use-favorite'
 import { formatTimes } from '@/assets/js/utils'
 import { PLAY_MODE } from '@/assets/js/constance'
@@ -265,7 +271,8 @@ export default defineComponent({
       lyricScrollRef,
       lyricListRef,
       pureMusicLyric,
-      playingLyric
+      playingLyric,
+      ...useMiddleInteractive()
     }
   }
 })
