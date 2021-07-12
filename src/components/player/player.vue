@@ -1,6 +1,6 @@
 <template>
   <div class="player" v-show="playLists.length">
-    <transition name="normal">
+    <transition name="normal" @enter="enter" @afterEnter="afterEnter" @leave="leave" @afterLeave="afterLeave">
       <div class="normal-player" v-show="fullScreen">
         <div class="background">
           <img :src="currentSong.pic" />
@@ -21,7 +21,7 @@
         >
           <div :style="middleLStyle" class="middle-l">
             <!-- cd -->
-            <div class="cd-wrapper">
+            <div class="cd-wrapper" ref="cdWrapperRef">
               <div class="cd" ref="cdWrapper">
                 <img
                   :src="currentSong.pic"
@@ -128,6 +128,7 @@ import useCd from './use-cd'
 import useLyric from './use-lyric'
 import useMiddleInteractive from './use-middle-interactive'
 import useFavorite from './use-favorite'
+import useAnimation from './use-animation'
 import { formatTimes } from '@/assets/js/utils'
 import { PLAY_MODE } from '@/assets/js/constance'
 import {
@@ -328,7 +329,8 @@ export default defineComponent({
       lyricListRef,
       pureMusicLyric,
       playingLyric,
-      ...useMiddleInteractive()
+      ...useMiddleInteractive(),
+      ...useAnimation()
     }
   }
 })

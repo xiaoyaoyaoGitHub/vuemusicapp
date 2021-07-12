@@ -1,0 +1,79 @@
+
+import { ref } from 'vue'
+import animations from 'create-keyframe-animation'
+export default function useAnimation() {
+    const cdWrapperRef = ref(null)
+
+    function enter(el, done) {
+        const { x, y, scale } = getPosAndScale()
+        const animation = {
+            0: {
+                transform: `translate3D(${x}px, ${y}px, 0) scale(${scale})`
+            },
+            100: {
+                transform: 'translate3D(0, 0,0 ) scale(1)'
+            }
+        }
+
+        animations.registerAnimation({
+            name: 'move',
+            animation,
+            presets: {
+                duration: 600,
+                easing: 'cubic-bezier(0.45, 0, 0.55, 1)'
+            }
+        })
+
+        animations.runAnimation(cdWrapperRef.value, 'move', done)
+    }
+
+    function afterEnter() {
+        console.log('afterenter')
+        animations.unregisterAnimation('move')
+        cdWrapperRef.value.style.animation = ''
+    }
+
+    function leave(el, done) {
+        const { x, y, scale } = getPosAndScale()
+        const cdWrapperRefVal = cdWrapperRef.value
+        cdWrapperRefVal.style.transition = 'all 0.6s cubic-bezier(0.45, 0, 0.55, 1)'
+        cdWrapperRefVal.style.transform = `translate3D(${x}px, ${y}px, 0) scale(${scale})`
+        cdWrapperRefVal.addEventListener('transitionend', next)
+
+        function next() {
+            cdWrapperRefVal.removeEventListener('transitionend', next)
+            done()
+        }
+    }
+
+    function afterLeave() {
+        const cdWrapperRefVal = cdWrapperRef.value
+        cdWrapperRefVal.style.transition = ''
+        cdWrapperRefVal.style.transform = ''
+    }
+
+    function getPosAndScale() {
+        const targetWidth = 40 // 小cd 直径
+        const paddingLeft = 40 // 大cd 距离左侧位置
+        const paddingBottom = 30 // 小cd 中心点距离底部位置
+        const paddingTop = 80 // 大cd 距离顶部位置
+        const width = window.innerWidth * 0.8 // 大cd 直径
+        const x = paddingLeft - window.innerWidth / 2 // x坐标偏移量
+        const y = window.innerHeight - paddingTop - width / 2 - paddingBottom // y轴偏移量
+        const scale = targetWidth / width // 缩放比
+
+        return {
+            x,
+            y,
+            scale
+        }
+    }
+
+    return {
+        cdWrapperRef,
+        enter,
+        afterEnter,
+        leave,
+        afterLeave
+    }
+}
