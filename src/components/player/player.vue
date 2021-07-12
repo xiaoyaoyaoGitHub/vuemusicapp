@@ -12,34 +12,46 @@
         <h2 class="subtitle">{{ currentSong.singer }}</h2>
       </div>
       <!-- cd 和 歌词 -->
-      <div class="middle" @touchstart.prevent="onTouchStart" @touchmove.prevent="onTouchMove" @touchend.prevent="onTouchEnd">
+      <div
+        class="middle"
+        @touchstart.prevent="onTouchStart"
+        @touchmove.prevent="onTouchMove"
+        @touchend.prevent="onTouchEnd"
+      >
         <div :style="middleLStyle" class="middle-l">
           <!-- cd -->
           <div class="cd-wrapper">
             <div class="cd" ref="cdWrapper">
-              <img :src="currentSong.pic" ref="cdImage" alt="" class="image" :class="cdClass"/>
+              <img
+                :src="currentSong.pic"
+                ref="cdImage"
+                alt=""
+                class="image"
+                :class="cdClass"
+              />
             </div>
           </div>
-           <!-- lyric -->
-           <div class="playing-lyric-wrapper">
-             <div class="playing-lyric">{{playingLyric}}</div>
-           </div>
+          <!-- lyric -->
+          <div class="playing-lyric-wrapper">
+            <div class="playing-lyric">{{ playingLyric }}</div>
+          </div>
         </div>
-        <scroll :style="middleRStyle" ref="lyricScrollRef" class="middle-r" >
-          <div class="lyric-wrapper" >
+        <scroll :style="middleRStyle" ref="lyricScrollRef" class="middle-r">
+          <div class="lyric-wrapper">
             <div ref="lyricListRef" v-if="currentLyric">
-              <p class="text" v-for="(line, index) in currentLyric.lines"
-                  :key="line.num"
-                  :class="{'current': currentLineNum === index}"
-                >
-                  {{line.txt}}
-
+              <p
+                class="text"
+                v-for="(line, index) in currentLyric.lines"
+                :key="line.num"
+                :class="{ current: currentLineNum === index }"
+              >
+                {{ line.txt }}
               </p>
             </div>
             <!-- 无歌词 -->
             <div class="pure-music">
               <p>
-                {{pureMusicLyric}}
+                {{ pureMusicLyric }}
               </p>
             </div>
           </div>
@@ -49,16 +61,22 @@
       <div class="bottom">
         <!-- 切换点 -->
         <div class="dot-wrapper">
-            <span class="dot" :class="{'active':currentShow==='cd'}"></span>
-            <span class="dot" :class="{'active':currentShow==='lyric'}"></span>
-          </div>
+          <span class="dot" :class="{ active: currentShow === 'cd' }"></span>
+          <span class="dot" :class="{ active: currentShow === 'lyric' }"></span>
+        </div>
         <!-- 进度条 -->
         <div class="progress-wrapper">
-          <span class="time time-l">{{formatTimes(currentTime)}}</span>
+          <span class="time time-l">{{ formatTimes(currentTime) }}</span>
           <div class="progress-bar-wrapper">
-            <progress-bar :progress="progress" @progrese-change="progressChange"></progress-bar>
+            <progress-bar
+              :progress="progress"
+              @progrese-change="progressChange"
+              ref="barRef"
+            ></progress-bar>
           </div>
-          <span class="time time-r">{{formatTimes(currentSong.duration)}}</span>
+          <span class="time time-r">{{
+            formatTimes(currentSong.duration)
+          }}</span>
         </div>
         <!-- 状态切换 -->
         <div class="operators">
@@ -75,18 +93,27 @@
             <i @click="next" class="icon-next"></i>
           </div>
           <div class="icon i-right">
-            <i @click="toggleFavorite(currentSong)" :class="getFavoriteIcon(currentSong)"></i>
+            <i
+              @click="toggleFavorite(currentSong)"
+              :class="getFavoriteIcon(currentSong)"
+            ></i>
           </div>
         </div>
       </div>
     </div>
     <mini-player :progress="progress" :togglePlay="togglePlaying"></mini-player>
-    <audio ref="audioRef" @pause="pause" @canplay="readPlay" @timeupdate="updateTime" @ended="end"></audio>
+    <audio
+      ref="audioRef"
+      @pause="pause"
+      @canplay="readPlay"
+      @timeupdate="updateTime"
+      @ended="end"
+    ></audio>
   </div>
 </template>
 
 <script>
-import { defineComponent, ref, computed, watch } from 'vue'
+import { defineComponent, ref, computed, watch, nextTick } from 'vue'
 import { useStore } from 'vuex'
 import ProgressBar from './progress-bar.vue'
 import Scroll from '@/components/scroll/scroll.vue'
@@ -112,6 +139,7 @@ export default defineComponent({
   },
   setup() {
     const audioRef = ref(null)
+    const barRef = ref(null)
     const songPlay = ref(false)
     const currentTime = ref(0) // 当前播放时长
     //   vuex
@@ -135,7 +163,16 @@ export default defineComponent({
     const { modeIcon, changeMode, playMode } = useMode()
     const { getFavoriteIcon, toggleFavorite } = useFavorite()
     const { cdClass, cdWrapper, cdImage } = useCd()
-    const { currentLyric, playLyric, stopLyric, currentLineNum, lyricScrollRef, lyricListRef, pureMusicLyric, playingLyric } = useLyric({ currentTime, songPlay })
+    const {
+      currentLyric,
+      playLyric,
+      stopLyric,
+      currentLineNum,
+      lyricScrollRef,
+      lyricListRef,
+      pureMusicLyric,
+      playingLyric
+    } = useLyric({ currentTime, songPlay })
     // watch
     watch(currentSong, newSong => {
       const audioValue = audioRef.value
@@ -158,7 +195,12 @@ export default defineComponent({
         stopLyric()
       }
     })
-
+    watch(fullScreen, async newFullScreen => {
+      if (newFullScreen) {
+        await nextTick()
+        barRef.value.setOffset(progress.value)
+      }
+    })
     function goBack() {
       store.dispatch(SET_FULL_SCREEN, false)
     }
@@ -166,6 +208,7 @@ export default defineComponent({
       if (!songPlay.value) {
         return
       }
+      console.log('currentTime', currentTime)
       store.dispatch(SET_PLAYING_STATE, !playing.value)
     }
     function pause() {
@@ -226,13 +269,16 @@ export default defineComponent({
     // 进度条
     function progressChange(progress) {
       const audioRefValue = audioRef.value
-      audioRefValue.currentTime = currentTime.value = audioRefValue.duration * progress
+      audioRefValue.currentTime = currentTime.value =
+        audioRefValue.duration * progress
       playLyric()
     }
     function end(e) {
-      if (e.target.currentTime === audioRef.value.duration) { // 结束
-        if (playMode.value === PLAY_MODE.loop) { // 循环播放
-            loop()
+      if (e.target.currentTime === audioRef.value.duration) {
+        // 结束
+        if (playMode.value === PLAY_MODE.loop) {
+          // 循环播放
+          loop()
         } else {
           next()
         }
@@ -241,6 +287,7 @@ export default defineComponent({
 
     return {
       currentSong,
+      barRef,
       fullScreen,
       playIcons,
       playLists,

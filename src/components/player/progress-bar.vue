@@ -52,8 +52,7 @@ export default defineComponent({
     watch(
       () => props.progress,
       newProgress => {
-        progressWidth.value =
-          (ctx.$el.clientWidth - PROGRESS_BTN_WIDTH) * newProgress
+        setOffset(newProgress)
       }
     )
 
@@ -97,13 +96,19 @@ export default defineComponent({
       emit('progrese-change', currProgress)
     }
 
+    function setOffset(progress) {
+      progressWidth.value =
+        Math.max(0, (ctx.$el.clientWidth - PROGRESS_BTN_WIDTH) * progress)
+    }
+
     return {
       progressStyle,
       progressBtnStyle,
       onTouchStart,
       onTouchMove,
       onTouchEnd,
-      changeProgress
+      changeProgress,
+      setOffset
     }
   }
 })

@@ -55,7 +55,6 @@ export default function useLyric({ currentTime, songPlay }) {
 
     // 监听歌词播放
     function handleLyric({ lineNum, txt }) {
-        console.log('lineNum', lineNum)
         const lyricScrollRefVal = lyricScrollRef.value
         const lyricListRefVal = lyricListRef.value
         if (!lyricListRefVal || !playing.value) { // 还没有渲染则不触发
