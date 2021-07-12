@@ -1,4 +1,4 @@
-import { ref, computed, onMounted, watch, nextTick } from 'vue'
+import { ref, computed, onMounted, watch, nextTick, onUnmounted } from 'vue'
 import { useStore } from 'vuex'
 import BScroll from '@better-scroll/core'
 import Slide from '@better-scroll/slide'
@@ -50,6 +50,11 @@ export default function useMiniSlider() {
                 sliderVal.goToPage(newIndex, 0, 0)
             }
         })
+    })
+    onUnmounted(() => {
+        if (slider.value) {
+            slider.value.distroy()
+        }
     })
 
     return {

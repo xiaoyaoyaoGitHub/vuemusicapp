@@ -1,106 +1,111 @@
 <template>
   <div class="player" v-show="playLists.length">
-    <div class="normal-player" v-show="fullScreen">
-      <div class="background">
-        <img :src="currentSong.pic" />
-      </div>
-      <div class="top">
-        <div class="back" @click="goBack">
-          <i class="icon-back"></i>
+    <transition name="normal">
+      <div class="normal-player" v-show="fullScreen">
+        <div class="background">
+          <img :src="currentSong.pic" />
         </div>
-        <h1 class="title">{{ currentSong.name }}</h1>
-        <h2 class="subtitle">{{ currentSong.singer }}</h2>
-      </div>
-      <!-- cd 和 歌词 -->
-      <div
-        class="middle"
-        @touchstart.prevent="onTouchStart"
-        @touchmove.prevent="onTouchMove"
-        @touchend.prevent="onTouchEnd"
-      >
-        <div :style="middleLStyle" class="middle-l">
-          <!-- cd -->
-          <div class="cd-wrapper">
-            <div class="cd" ref="cdWrapper">
-              <img
-                :src="currentSong.pic"
-                ref="cdImage"
-                alt=""
-                class="image"
-                :class="cdClass"
-              />
+        <div class="top">
+          <div class="back" @click="goBack">
+            <i class="icon-back"></i>
+          </div>
+          <h1 class="title">{{ currentSong.name }}</h1>
+          <h2 class="subtitle">{{ currentSong.singer }}</h2>
+        </div>
+        <!-- cd 和 歌词 -->
+        <div
+          class="middle"
+          @touchstart.prevent="onTouchStart"
+          @touchmove.prevent="onTouchMove"
+          @touchend.prevent="onTouchEnd"
+        >
+          <div :style="middleLStyle" class="middle-l">
+            <!-- cd -->
+            <div class="cd-wrapper">
+              <div class="cd" ref="cdWrapper">
+                <img
+                  :src="currentSong.pic"
+                  ref="cdImage"
+                  alt=""
+                  class="image"
+                  :class="cdClass"
+                />
+              </div>
+            </div>
+            <!-- lyric -->
+            <div class="playing-lyric-wrapper">
+              <div class="playing-lyric">{{ playingLyric }}</div>
             </div>
           </div>
-          <!-- lyric -->
-          <div class="playing-lyric-wrapper">
-            <div class="playing-lyric">{{ playingLyric }}</div>
-          </div>
-        </div>
-        <scroll :style="middleRStyle" ref="lyricScrollRef" class="middle-r">
-          <div class="lyric-wrapper">
-            <div ref="lyricListRef" v-if="currentLyric">
-              <p
-                class="text"
-                v-for="(line, index) in currentLyric.lines"
-                :key="line.num"
-                :class="{ current: currentLineNum === index }"
-              >
-                {{ line.txt }}
-              </p>
+          <scroll :style="middleRStyle" ref="lyricScrollRef" class="middle-r">
+            <div class="lyric-wrapper">
+              <div ref="lyricListRef" v-if="currentLyric">
+                <p
+                  class="text"
+                  v-for="(line, index) in currentLyric.lines"
+                  :key="line.num"
+                  :class="{ current: currentLineNum === index }"
+                >
+                  {{ line.txt }}
+                </p>
+              </div>
+              <!-- 无歌词 -->
+              <div class="pure-music">
+                <p>
+                  {{ pureMusicLyric }}
+                </p>
+              </div>
             </div>
-            <!-- 无歌词 -->
-            <div class="pure-music">
-              <p>
-                {{ pureMusicLyric }}
-              </p>
+          </scroll>
+        </div>
+        <!-- 底部 -->
+        <div class="bottom">
+          <!-- 切换点 -->
+          <div class="dot-wrapper">
+            <span class="dot" :class="{ active: currentShow === 'cd' }"></span>
+            <span
+              class="dot"
+              :class="{ active: currentShow === 'lyric' }"
+            ></span>
+          </div>
+          <!-- 进度条 -->
+          <div class="progress-wrapper">
+            <span class="time time-l">{{ formatTimes(currentTime) }}</span>
+            <div class="progress-bar-wrapper">
+              <progress-bar
+                :progress="progress"
+                @progrese-change="progressChange"
+                ref="barRef"
+              ></progress-bar>
+            </div>
+            <span class="time time-r">{{
+              formatTimes(currentSong.duration)
+            }}</span>
+          </div>
+          <!-- 状态切换 -->
+          <div class="operators">
+            <div class="icon i-left">
+              <i @click="changeMode" :class="modeIcon"></i>
+            </div>
+            <div class="icon i-left" :class="disabledClass">
+              <i @click="prev" class="icon-prev"></i>
+            </div>
+            <div class="icon i-center" :class="disabledClass">
+              <i @click="togglePlaying" :class="playIcons"></i>
+            </div>
+            <div class="icon i-right" :class="disabledClass">
+              <i @click="next" class="icon-next"></i>
+            </div>
+            <div class="icon i-right">
+              <i
+                @click="toggleFavorite(currentSong)"
+                :class="getFavoriteIcon(currentSong)"
+              ></i>
             </div>
           </div>
-        </scroll>
-      </div>
-      <!-- 底部 -->
-      <div class="bottom">
-        <!-- 切换点 -->
-        <div class="dot-wrapper">
-          <span class="dot" :class="{ active: currentShow === 'cd' }"></span>
-          <span class="dot" :class="{ active: currentShow === 'lyric' }"></span>
-        </div>
-        <!-- 进度条 -->
-        <div class="progress-wrapper">
-          <span class="time time-l">{{ formatTimes(currentTime) }}</span>
-          <div class="progress-bar-wrapper">
-            <progress-bar
-              :progress="progress"
-              @progrese-change="progressChange"
-              ref="barRef"
-            ></progress-bar>
-          </div>
-          <span class="time time-r">{{
-            formatTimes(currentSong.duration)
-          }}</span>
-        </div>
-        <!-- 状态切换 -->
-        <div class="operators">
-          <div class="icon i-left">
-            <i @click="changeMode" :class="modeIcon"></i>
-          </div>
-          <div class="icon i-left" :class="disabledClass">
-            <i @click="prev" class="icon-prev"></i>
-          </div>
-          <div class="icon i-center" :class="disabledClass">
-            <i @click="togglePlaying" :class="playIcons"></i>
-          </div>
-          <div class="icon i-right" :class="disabledClass">
-            <i @click="next" class="icon-next"></i>
-          </div>
-          <div class="icon i-right">
-            <i
-              @click="toggleFavorite(currentSong)"
-              :class="getFavoriteIcon(currentSong)"
-            ></i>
-          </div>
         </div>
       </div>
-    </div>
+    </transition>
     <mini-player :progress="progress" :togglePlay="togglePlaying"></mini-player>
     <audio
       ref="audioRef"
