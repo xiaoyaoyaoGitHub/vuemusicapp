@@ -1,7 +1,7 @@
 <template>
     <teleport to="body"> <!--内置组件  直接挂载到body上-->
         <transition name="list-fade">
-            <div class="playlist" v-show="visible && playlist.length">
+            <div class="playlist" @click.stop="hide" v-show="visible && playlist.length">
                 <div class="list-wrapper">
                     <div class="list-header">
                         <h1 class="title">
@@ -12,9 +12,9 @@
                         </h1>
                     </div>
                     <!-- 列表部分 -->
-                    <scroll class="list-content" ref="scrollRef" v-if="sequenceList.length">
-                         <transition-group tag="ul">
-                             <li class="item" v-for="song in sequenceList" :key="song.mid">
+                    <scroll class="list-content" ref="scrollRef" @click.stop v-if="sequenceList.length">
+                         <transition-group ref="listRef" tag="ul">
+                             <li class="item" @click="selectSong(song)" v-for="song in sequenceList" :key="song.mid">
                                 <!-- 当前播放的歌曲 -->
                                 <i class="current" :class="getCurrentIcon(song)"></i>
                                 <!-- 歌曲名称 -->
@@ -44,11 +44,12 @@
 </template>
 
 <script>
-import { defineComponent, computed, ref, nextTick } from 'vue'
+import { defineComponent, computed, ref, nextTick, watch } from 'vue'
 import Scroll from '@/components/scroll/scroll'
 import { useStore } from 'vuex'
 import useMode from './use-mode'
 import useFavorite from './use-favorite'
+import { SET_CURRENT_INDEX, SET_PLAYING_STATE } from '@/store/type'
 export default defineComponent({
     name: 'PlayList',
     components: {
@@ -57,6 +58,7 @@ export default defineComponent({
     setup() {
         const visible = ref(false)
         const scrollRef = ref(null)
+        const listRef = ref(null)
         const store = useStore()
         const { changeMode, modeIcon, modeText } = useMode()
         const { getFavoriteIcon, toggleFavorite } = useFavorite()
@@ -64,10 +66,19 @@ export default defineComponent({
         const playlist = computed(() => store.state.playList)
         const sequenceList = computed(() => store.state.sequenceList)
 
+        watch(currentSong, async (newSong) => { // 歌曲变化,滚动
+            if (!visible.value || !newSong.id) {
+                return
+            }
+            await nextTick()
+            scrollToCurrent()
+        })
+
         async function show() {
             visible.value = true
             await nextTick()
             scrollRef.value.scroll.refresh()
+            scrollToCurrent()
         }
 
         function hide() {
@@ -79,9 +90,27 @@ export default defineComponent({
                 return 'icon-play'
             }
         }
+        // 滚动到指定歌曲
+        function scrollToCurrent() {
+            const index = playlist.value.findIndex(song => {
+                return currentSong.value.id === song.id
+            })
+            if (index < 2) return
+            const target = listRef.value.$el.children[index - 2]
+            scrollRef.value.scroll.scrollToElement(target, 300)
+        }
+
+        function selectSong(song) {
+            const index = playlist.value.findIndex(item => {
+                return item.id === song.id
+            })
+            store.dispatch(SET_CURRENT_INDEX, index)
+            store.dispatch(SET_PLAYING_STATE, true)
+        }
 
         return {
             scrollRef,
+            listRef,
             currentSong,
             playlist,
             sequenceList,
@@ -92,6 +121,7 @@ export default defineComponent({
             getCurrentIcon,
             getFavoriteIcon,
             toggleFavorite,
+            selectSong,
             show,
             hide
         }
