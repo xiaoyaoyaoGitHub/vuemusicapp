@@ -3,8 +3,14 @@ import { ref } from 'vue'
 import animations from 'create-keyframe-animation'
 export default function useAnimation() {
     const cdWrapperRef = ref(null)
+    let leaving = false
+    let entering = false
 
     function enter(el, done) {
+        if (leaving) { // 如果leave动画还没完成则手动调用afterleave
+            afterLeave()
+        }
+        entering = true
         const { x, y, scale } = getPosAndScale()
         const animation = {
             0: {
@@ -28,12 +34,16 @@ export default function useAnimation() {
     }
 
     function afterEnter() {
-        console.log('afterenter')
+        entering = false
         animations.unregisterAnimation('move')
         cdWrapperRef.value.style.animation = ''
     }
 
     function leave(el, done) {
+        if (entering) { // 如果enter还没执行完,则手动调动afterenter完成动画
+            afterEnter()
+        }
+        leaving = true
         const { x, y, scale } = getPosAndScale()
         const cdWrapperRefVal = cdWrapperRef.value
         cdWrapperRefVal.style.transition = 'all 0.6s cubic-bezier(0.45, 0, 0.55, 1)'
@@ -47,6 +57,7 @@ export default function useAnimation() {
     }
 
     function afterLeave() {
+        leaving = false
         const cdWrapperRefVal = cdWrapperRef.value
         cdWrapperRefVal.style.transition = ''
         cdWrapperRefVal.style.transform = ''

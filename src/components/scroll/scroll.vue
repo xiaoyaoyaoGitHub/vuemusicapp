@@ -24,8 +24,10 @@ export default defineComponent({
     const scroll = useScroll(rootRef, props, emit)
     onUpdated(() => {
       // console.log('update')
-      scroll.value.enable()
-      scroll.value.refresh()
+      if (scroll.value) {
+        scroll.value.enable()
+        scroll.value.refresh()
+      }
     })
     return {
       rootRef,
