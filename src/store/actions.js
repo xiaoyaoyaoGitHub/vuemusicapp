@@ -9,7 +9,8 @@ import {
     SET_PLAY_RANDOM,
     SET_FAVORITE_LIST,
     ADD_SONG_LYRIC,
-    REMOVE_SONG
+    REMOVE_SONG,
+    CLEAR_SONG_LIST
 } from './type'
 import { shuffle } from '@/assets/js/utils'
 import { PLAY_MODE } from '@/assets/js/constance'
@@ -88,6 +89,13 @@ const actions = {
         commit(SET_SEQUENCE_LIST, sequenceList)
         commit(SET_PLAY_LIST, playList)
         commit(SET_CURRENT_INDEX, currentIndex)
+    },
+    // 清空播放列表
+    [CLEAR_SONG_LIST]({ commit, state }) {
+        commit(SET_SEQUENCE_LIST, [])
+        commit(SET_PLAY_LIST, [])
+        commit(SET_PLAYING_STATE, false)
+        commit(SET_CURRENT_INDEX, 0)
     }
 }
 

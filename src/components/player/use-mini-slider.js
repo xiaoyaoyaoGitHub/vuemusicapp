@@ -53,7 +53,7 @@ export default function useMiniSlider() {
 
         watch(playList, async () => {
             await nextTick()
-            if (sliderShow.value && sliderVal) {
+            if (sliderShow.value && sliderVal && playList.value.length) {
                 sliderVal.refresh()
             }
         })

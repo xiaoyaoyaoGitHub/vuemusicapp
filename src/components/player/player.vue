@@ -181,6 +181,7 @@ export default defineComponent({
     } = useLyric({ currentTime, songPlay })
     // watch
     watch(currentSong, newSong => {
+      if (!newSong.id) return
       const audioValue = audioRef.value
       audioValue.src = newSong.url
       songPlay.value = false
