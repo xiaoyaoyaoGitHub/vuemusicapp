@@ -8,6 +8,8 @@ vue3开发的音乐app
  
 ## 问题
 - 因为组件不停的触发updated导致BScroll不能下拉回弹问题
+- uncaught (in promise) domexception: failed to load because no supported source was found.
+    如果出现这个问题大概率是audi找不到播放资源导致的,看下自己currentSong的值
 
 
 ## state
