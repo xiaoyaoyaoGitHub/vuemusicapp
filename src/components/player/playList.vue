@@ -13,7 +13,7 @@
                     </div>
                     <!-- 列表部分 -->
                     <scroll class="list-content" ref="scrollRef" @click.stop v-if="sequenceList.length">
-                         <transition-group ref="listRef" tag="ul">
+                         <transition-group name="list" ref="listRef" tag="ul">
                              <li class="item" @click="selectSong(song)" v-for="song in sequenceList" :key="song.mid">
                                 <!-- 当前播放的歌曲 -->
                                 <i class="current" :class="getCurrentIcon(song)"></i>
@@ -22,6 +22,10 @@
                                 <!-- favorite -->
                                 <span class="favorite" @click.stop="toggleFavorite(song)">
                                     <i class="icon" :class="getFavoriteIcon(song)"></i>
+                                </span>
+                                <!-- delete -->
+                                <span class="delete" @click.stop="removeSong(song)">
+                                  <i class="icon-delete"></i>
                                 </span>
                             </li>
                          </transition-group>
@@ -49,7 +53,7 @@ import Scroll from '@/components/scroll/scroll'
 import { useStore } from 'vuex'
 import useMode from './use-mode'
 import useFavorite from './use-favorite'
-import { SET_CURRENT_INDEX, SET_PLAYING_STATE } from '@/store/type'
+import { SET_CURRENT_INDEX, SET_PLAYING_STATE, REMOVE_SONG } from '@/store/type'
 export default defineComponent({
     name: 'PlayList',
     components: {
@@ -108,6 +112,11 @@ export default defineComponent({
             store.dispatch(SET_PLAYING_STATE, true)
         }
 
+        function removeSong(song) {
+          store.dispatch(REMOVE_SONG, song)
+          console.log('remove song')
+        }
+
         return {
             scrollRef,
             listRef,
@@ -121,6 +130,7 @@ export default defineComponent({
             getCurrentIcon,
             getFavoriteIcon,
             toggleFavorite,
+            removeSong,
             selectSong,
             show,
             hide

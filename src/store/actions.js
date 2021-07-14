@@ -8,7 +8,8 @@ import {
     SET_PLAY_MODE,
     SET_PLAY_RANDOM,
     SET_FAVORITE_LIST,
-    ADD_SONG_LYRIC
+    ADD_SONG_LYRIC,
+    REMOVE_SONG
 } from './type'
 import { shuffle } from '@/assets/js/utils'
 import { PLAY_MODE } from '@/assets/js/constance'
@@ -71,7 +72,27 @@ const actions = {
     // 设置歌词
     [ADD_SONG_LYRIC]({ commit }, { song, lyric }) {
         commit(ADD_SONG_LYRIC, { song, lyric })
+    },
+    // 删除歌曲
+    [REMOVE_SONG]({ commit, state }, song) {
+        const sequenceList = state.sequenceList.slice()
+        const playList = state.playList.slice()
+        let currentIndex = state.currentIndex
+        const sequenceIndex = findIndex(sequenceList, song)
+        const playIndex = findIndex(playList, song)
+        sequenceList.splice(sequenceIndex, 1)
+        playList.splice(playIndex, 1)
+        if (currentIndex >= playIndex) { // 修改当前播放歌曲的索引
+            currentIndex = Math.max(0, currentIndex - 1)
+        }
+        commit(SET_SEQUENCE_LIST, sequenceList)
+        commit(SET_PLAY_LIST, playList)
+        commit(SET_CURRENT_INDEX, currentIndex)
     }
+}
+
+function findIndex(lists, item) {
+    return lists.findIndex(list => list.id === item.id)
 }
 
 export default actions
