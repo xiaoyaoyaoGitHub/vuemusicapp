@@ -50,6 +50,13 @@ export default function useMiniSlider() {
                 sliderVal.goToPage(newIndex, 0, 0)
             }
         })
+
+        watch(playList, async () => {
+            await nextTick()
+            if (sliderShow.value && sliderVal) {
+                sliderVal.refresh()
+            }
+        })
     })
     onUnmounted(() => {
         if (slider.value) {
