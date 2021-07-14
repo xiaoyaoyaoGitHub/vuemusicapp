@@ -24,7 +24,7 @@
                                     <i class="icon" :class="getFavoriteIcon(song)"></i>
                                 </span>
                                 <!-- delete -->
-                                <span class="delete" @click.stop="removeSong(song)">
+                                <span class="delete" :click="{'disable':removing}" @click.stop="removeSong(song)">
                                   <i class="icon-delete"></i>
                                 </span>
                             </li>
@@ -63,6 +63,7 @@ export default defineComponent({
         const visible = ref(false)
         const scrollRef = ref(null)
         const listRef = ref(null)
+        const removing = ref(false)
         const store = useStore()
         const { changeMode, modeIcon, modeText } = useMode()
         const { getFavoriteIcon, toggleFavorite } = useFavorite()
@@ -113,8 +114,12 @@ export default defineComponent({
         }
 
         function removeSong(song) {
+          if (removing.value) return
+          removing.value = true
           store.dispatch(REMOVE_SONG, song)
-          console.log('remove song')
+          setTimeout(() => {
+            removing.value = false
+          }, 300) // 动画是300ms
         }
 
         return {
@@ -122,6 +127,7 @@ export default defineComponent({
             listRef,
             currentSong,
             playlist,
+            removing,
             sequenceList,
             visible,
             changeMode,
