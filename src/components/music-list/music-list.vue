@@ -37,8 +37,7 @@ import { defineComponent } from 'vue'
 import Scroll from '@/components/scroll/scroll'
 import SongList from '@/components/base/song-list/song-list'
 import { SET_PLAY, SET_PLAY_RANDOM, SET_SEQUENCE_LIST, SET_FULL_SCREEN } from '@/store/type'
-import { shuffle } from '@/assets/js/utils'
-import { mapActions } from 'vuex'
+import { mapActions, mapState } from 'vuex'
 const TOP_HEIGHT = 40
 export default defineComponent({
   name: 'music-lists',
@@ -47,6 +46,7 @@ export default defineComponent({
       imageHeight: 0,
       scrollY: 0,
       maxTranslateY: 0
+
     }
   },
   props: {
@@ -125,10 +125,13 @@ export default defineComponent({
       }
     },
     scrollStyle() {
+      const bottom = this.playList.length ? '60px' : ''
       return {
-        top: `${this.imageHeight}px`
+        top: `${this.imageHeight}px`,
+        bottom
       }
-    }
+    },
+    ...mapState(['playList'])
   },
   updated() {
     // console.log('updated')
