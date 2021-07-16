@@ -12,7 +12,12 @@
         <div class="recommend-list">
           <h1 class="list-title" v-show="!loading">热门歌单推荐</h1>
           <ul>
-            <li v-for="item in albums" class="item" :key="item.id">
+            <li
+              v-for="item in albums"
+              @click="selectAlbum(item)"
+              class="item"
+              :key="item.id"
+            >
               <div class="icon">
                 <img width="60" height="60" v-lazy="item.pic" />
               </div>
@@ -29,20 +34,28 @@
         </div>
       </div>
     </scroll>
+    <router-view v-slot="{ Component }">
+      <transition appear name="slide">
+        <component :is="Component" :data="selectedAlbum" />
+      </transition>
+    </router-view>
   </div>
 </template>
 
 <script>
 import { defineComponent } from 'vue'
 import { getRecommend } from '@/service/recommend'
+import { ALBUM_KEY } from '@/assets/js/constance'
+import Storage from 'good-storage'
 import Slider from '@/components/slider/slider'
 import Scroll from '@/components/wrap-scroll'
-
+import Album from './album.vue'
 export default defineComponent({
   name: 'Recommend',
   components: {
     Slider,
-    Scroll
+    Scroll,
+    Album
   },
   data() {
     return {
@@ -61,6 +74,18 @@ export default defineComponent({
     const result = await getRecommend()
     this.sliders = result.sliders
     this.albums = result.albums
+  },
+  methods: {
+    selectAlbum(album) {
+      this.selectedAlbum = album
+      this.cacheAlbum(album)
+      this.$router.push({
+        path: `/recommend/${album.id}`
+      })
+    },
+    cacheAlbum(album) {
+      Storage.session.set(ALBUM_KEY, album)
+    }
   }
 })
 </script>

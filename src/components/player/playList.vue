@@ -71,7 +71,8 @@
 
 <script>
 import { defineComponent, computed, ref, nextTick, watch } from 'vue'
-import Scroll from '@/components/scroll/scroll'
+import Scroll from '@/components/wrap-scroll'
+
 import Confirm from '@/components/base/confirm/confirm'
 import { useStore } from 'vuex'
 import useMode from './use-mode'

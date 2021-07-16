@@ -18,7 +18,13 @@ const routes = [
   },
   {
     path: '/recommend',
-    component: () => import('@/views/recommend')
+    component: () => import('@/views/recommend'),
+    children: [
+      {
+        path: ':id',
+        component: () => import('@/views/album')
+      }
+    ]
   },
   {
     path: '/top-list',
