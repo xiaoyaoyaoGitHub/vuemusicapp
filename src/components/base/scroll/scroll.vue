@@ -18,7 +18,7 @@ export default defineComponent({
       default: 0
     }
   },
-  emit: ['scroll'],
+  emits: ['scroll'],
   setup(props, { emit }) {
     const rootRef = ref(null)
     const scroll = useScroll(rootRef, props, emit)

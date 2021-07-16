@@ -121,7 +121,7 @@
 import { defineComponent, ref, computed, watch, nextTick } from 'vue'
 import { useStore } from 'vuex'
 import ProgressBar from './progress-bar.vue'
-import Scroll from '@/components/scroll/scroll.vue'
+import Scroll from '@/components/wrap-scroll'
 import MiniPlayer from './mini-player.vue'
 import useMode from './use-mode'
 import useCd from './use-cd'

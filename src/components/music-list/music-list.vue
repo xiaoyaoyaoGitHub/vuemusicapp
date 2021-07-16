@@ -34,7 +34,7 @@
 
 <script>
 import { defineComponent } from 'vue'
-import Scroll from '@/components/scroll/scroll'
+import Scroll from '@/components/wrap-scroll'
 import SongList from '@/components/base/song-list/song-list'
 import { SET_PLAY, SET_PLAY_RANDOM, SET_SEQUENCE_LIST, SET_FULL_SCREEN } from '@/store/type'
 import { mapActions, mapState } from 'vuex'
