@@ -28,7 +28,11 @@ const routes = [
   },
   {
     path: '/top-list',
-    component: () => import('@/views/top-list')
+    component: () => import('@/views/top-list'),
+    children: [{
+      path: ':id',
+      component: () => import('@/views/top-detail')
+    }]
   },
   {
     path: '/search',
