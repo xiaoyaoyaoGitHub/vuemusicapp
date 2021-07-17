@@ -21,12 +21,12 @@ export default defineComponent({
     setup(props, { emit }) {
         const query = ref(props.modelValue)
 
-        watchEffect(() => {
+        watchEffect(() => { // 监听props变化
             query.value = props.modelValue
         })
 
-        watch(query, debounce(300, (newQuery) => {
-            emit('update:modelValue', newQuery)
+        watch(() => props.modelValue, debounce(300, (newQuery) => {
+            emit('update:modelValue', newQuery.trim())
         }))
 
         // 清空

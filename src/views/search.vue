@@ -1,7 +1,19 @@
 <template>
   <div class="search">
+    <!-- 搜索框 -->
     <div class="search-input-wrapper">
       <search-input v-model="query"></search-input>
+    </div>
+    <!-- 热门搜索 -->
+    <div class="search-content">
+      <div class="hot-keys">
+      <h1 class="title">热门搜索</h1>
+      <ul>
+        <li class="item" @click="addQuery(item)" v-for="item in hotKeys" :key="item.id">
+          <span>{{item.key}}</span>
+        </li>
+      </ul>
+    </div>
     </div>
   </div>
 </template>
@@ -9,6 +21,7 @@
 <script>
 import { defineComponent, ref, watch } from 'vue'
 import SearchInput from '@/components/search/search-input'
+import { getHotKeys } from '@/service/search'
 export default defineComponent({
   name: 'Search',
   components: {
@@ -16,11 +29,20 @@ export default defineComponent({
   },
   setup() {
     const query = ref('')
-    watch(query, newquery => {
-      console.log(newquery)
+    const hotKeys = ref([])
+    // 获取热门搜索
+    getHotKeys().then(res => {
+      hotKeys.value = res.hotKeys
     })
+
+    // 热门搜索点击搜索
+    function addQuery(hotkey) {
+      query.value = hotkey.key
+    }
     return {
-      query
+      query,
+      hotKeys,
+      addQuery
     }
   }
 })
