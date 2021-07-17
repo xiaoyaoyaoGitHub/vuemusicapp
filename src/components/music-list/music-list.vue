@@ -26,7 +26,7 @@
       @scroll="onScroll"
     >
       <div class="song-list-wrapper">
-        <song-list :songs="songs" @select="selectSong"></song-list>
+        <song-list :rank="rank" :songs="songs" @select="selectSong"></song-list>
       </div>
     </scroll>
   </div>
@@ -72,7 +72,11 @@ export default defineComponent({
       type: String,
       default: '抱歉,没有找到歌曲哦'
     },
-    loading: Boolean
+    loading: Boolean,
+    rank: {
+      type: Boolean,
+      default: false
+    }
   },
   components: {
     Scroll,

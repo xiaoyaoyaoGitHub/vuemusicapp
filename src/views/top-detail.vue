@@ -5,6 +5,7 @@
       :pic="pic"
       :songs="songs"
       :loading="loading"
+      rank
     ></music-list>
   </div>
 </template>
