@@ -23,7 +23,7 @@ export default function (name, sessionKey, fetch) {
                     data = this.data
                 } else {
                     const cache = Storage.session.get(sessionKey)
-                    if (cache && cache.mid === this.$route.params.id) {
+                    if (cache && (cache.mid || cache.id + '') === this.$route.params.id) {
                         data = cache
                     }
                 }
@@ -31,7 +31,7 @@ export default function (name, sessionKey, fetch) {
                 return data
             },
             title() {
-                return this.computedData && this.computedData.name
+                return this.computedData && (this.computedData.name || this.computedData.title)
             },
             pic() {
                 return this.computedData && this.computedData.pic
