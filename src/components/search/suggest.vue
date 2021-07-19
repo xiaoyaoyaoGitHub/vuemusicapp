@@ -1,5 +1,5 @@
 <template>
-  <div class="suggest" v-loading="loading" v-no-result="noResult">
+  <div class="suggest" v-loading="loading" v-no-result="noResult" ref="rootRef">
     <ul class="suggest-list">
       <li class="suggest-item" v-show="singer">
         <div class="icon">
@@ -15,13 +15,14 @@
           <p class="text">{{song.singer}}-{{song.name}}</p>
         </div>
       </li>
-      <div class="suggest-item"></div>
+      <div class="suggest-item" v-loading:[pullLoadingText]="isPullLoading"></div>
     </ul>
   </div>
 </template>
 
 <script>
 import { defineComponent, ref, watch, computed } from 'vue'
+import usePullUpLoad from './use-pull-up-load'
 import { search } from '@/service/search'
 import { processSongs } from '@/service/song'
 export default defineComponent({
@@ -39,14 +40,20 @@ export default defineComponent({
   setup(props) {
     const songs = ref([])
     const singer = ref(null)
+    const pullLoadingText = ref('')
     const page = ref(1)
     const hasMore = ref(true)
+    const { rootRef, isPullUpLoad, scroll } = usePullUpLoad(searchMore)
     const loading = computed(() => {
       return !songs.value.length
     })
     const noResult = computed(() => {
       return !songs.value.length && !hasMore.value
     })
+    const isPullLoading = computed(() => {
+      return isPullUpLoad.value && hasMore.value
+    })
+
     watch(
       () => props.query,
       async newQuery => {
@@ -58,7 +65,8 @@ export default defineComponent({
       }
     )
 
-    const searchFirstTime = async () => {
+    // 搜索
+    async function searchFirstTime() {
       songs.value = []
       singer.value = null
       page.value = 1
@@ -71,12 +79,26 @@ export default defineComponent({
       singer.value = result.singer
       hasMore.value = result.hasMore
     }
+    // 搜索更多
+    async function searchMore () {
+      page.value++
+      const result = await search(
+        props.query,
+        page.value,
+        props.showSinger
+      )
+      songs.value = songs.value.concat(await processSongs(result.songs))
+      hasMore.value = result.hasMore
+    }
 
     return {
       songs,
       singer,
       loading,
-      noResult
+      pullLoadingText,
+      noResult,
+      rootRef,
+      isPullLoading
     }
   }
 })
