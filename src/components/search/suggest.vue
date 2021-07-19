@@ -1,7 +1,7 @@
 <template>
-  <div class="suggest" v-loading="loading">
+  <div class="suggest" v-loading="loading" v-no-result="noResult">
     <ul class="suggest-list">
-      <li class="suggest-item">
+      <li class="suggest-item" v-show="singer">
         <div class="icon">
           <div class="icon-mine"></div>
         </div>
@@ -21,9 +21,9 @@
 </template>
 
 <script>
-import { defineComponent, ref, watch } from 'vue'
+import { defineComponent, ref, watch, computed } from 'vue'
 import { search } from '@/service/search'
-
+import { processSongs } from '@/service/song'
 export default defineComponent({
   name: 'Suggest',
   props: {
@@ -37,10 +37,16 @@ export default defineComponent({
     }
   },
   setup(props) {
-    const loading = ref(true)
     const songs = ref([])
+    const singer = ref(null)
     const page = ref(1)
-
+    const hasMore = ref(true)
+    const loading = computed(() => {
+      return !songs.value.length
+    })
+    const noResult = computed(() => {
+      return !songs.value.length && !hasMore.value
+    })
     watch(
       () => props.query,
       async newQuery => {
@@ -54,20 +60,23 @@ export default defineComponent({
 
     const searchFirstTime = async () => {
       songs.value = []
+      singer.value = null
       page.value = 1
-      loading.value = true
       const result = await search(
         props.query,
         page.value,
         props.showSinger
       )
-      loading.value = false
-      songs.value = result.songs
+      songs.value = await processSongs(result.songs)
+      singer.value = result.singer
+      hasMore.value = result.hasMore
     }
 
     return {
       songs,
-      loading
+      singer,
+      loading,
+      noResult
     }
   }
 })
