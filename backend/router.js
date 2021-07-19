@@ -43,8 +43,8 @@ function getUid() {
 function get(url, params) {
     return axios.get(url, {
         headers: {
-            referer: 'https://y.qq.com/',
-            origin: 'https://y.qq.com/'
+            referer: 'https://y.qq.com/'
+            // origin: 'https://y.qq.com/'
         },
         params: Object.assign({}, commonParams, params)
     })
@@ -637,29 +637,33 @@ function registerHotKeys(app) {
 // 注册搜索查询接口
 function registerSearch(app) {
     app.get('/api/search', (req, res) => {
-        const url = 'https://c.y.qq.com/soso/fcgi-bin/search_for_qq_cp'
+        // const url = 'https://c.y.qq.com/soso/fcgi-bin/search_for_qq_cp'
+        const url = 'https://c.y.qq.com/soso/fcgi-bin/client_search_cp'
 
         const { query, page, showSinger } = req.query
 
         const data = {
-            _: getRandomVal(),
-            g_tk_new_20200303: token,
+            // _: getRandomVal(),
+            // g_tk_new_20200303: token,
+            // n: 20,
+            // zhidaqu: 1,
+            // catZhida: showSinger === 'true' ? 1 : 0,
+            // t: 0,
+            // flag: 1,
+            // ie: 'utf-8',
+            // sem: 1,
+
+            // remoteplace: 'txt.mqq.all',
+            // uin: '0',
+            // needNewCode: 1,
+            // platform: 'h5',
+            // format: 'json',
+            aggr: 1,
+            cr: 1,
+            flag_qc: 1,
             w: query,
             p: page,
-            perpage: 20,
-            n: 20,
-            zhidaqu: 1,
-            catZhida: showSinger === 'true' ? 1 : 0,
-            t: 0,
-            flag: 1,
-            ie: 'utf-8',
-            sem: 1,
-            aggr: 0,
-            remoteplace: 'txt.mqq.all',
-            uin: '0',
-            needNewCode: 1,
-            platform: 'h5',
-            format: 'json'
+            n: 20
         }
 
         get(url, data).then((response) => {
@@ -714,6 +718,8 @@ function registerSearch(app) {
             } else {
                 res.json(data)
             }
+        }).catch(err => {
+            console.log(err)
         })
     })
 }

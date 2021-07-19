@@ -17,15 +17,33 @@ export default defineComponent({
             default: ''
         }
     },
+    // data() {
+    //     return {
+    //       query: this.modelValue
+    //     }
+    // },
+    // created() {
+    //   this.$watch('query', (newQuery) => {
+    //     this.$emit('update:modelValue', newQuery.trim())
+    //   })
+    //   this.$watch('modelValue', (newModelValue) => {
+    //     console.log(this.modelValue)
+    //     this.query = newModelValue
+    //   })
+    // }
+    // methods: {
+
+    // }
     // 如果props在此处解构会丢失响应式
     setup(props, { emit }) {
         const query = ref(props.modelValue)
 
-        watchEffect(() => { // 监听props变化
-            query.value = props.modelValue
+        watch(() => props.modelValue, (newModelValue) => {
+          query.value = newModelValue
         })
 
-        watch(() => props.modelValue, debounce(300, (newQuery) => {
+        watch(query, debounce(300, (newQuery) => {
+            if (props.modelValue === newQuery) return
             emit('update:modelValue', newQuery.trim())
         }))
 
