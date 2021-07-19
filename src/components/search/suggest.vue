@@ -21,7 +21,7 @@
 </template>
 
 <script>
-import { defineComponent, ref, watch, computed } from 'vue'
+import { defineComponent, ref, watch, computed, nextTick } from 'vue'
 import usePullUpLoad from './use-pull-up-load'
 import { search } from '@/service/search'
 import { processSongs } from '@/service/song'
@@ -78,6 +78,8 @@ export default defineComponent({
       songs.value = await processSongs(result.songs)
       singer.value = result.singer
       hasMore.value = result.hasMore
+       await nextTick()
+      await makeItScrollable()
     }
     // 搜索更多
     async function searchMore () {
@@ -89,6 +91,15 @@ export default defineComponent({
       )
       songs.value = songs.value.concat(await processSongs(result.songs))
       hasMore.value = result.hasMore
+      await nextTick()
+      await makeItScrollable()
+    }
+
+    // 不足一屏时再次请求
+    async function makeItScrollable() {
+      if (scroll.value.maxScrollY >= -1) {
+        await searchMore()
+      }
     }
 
     return {
