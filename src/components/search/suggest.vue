@@ -83,6 +83,9 @@ export default defineComponent({
     }
     // 搜索更多
     async function searchMore () {
+      if (!hasMore.value || !props.query) {
+        return
+      }
       page.value++
       const result = await search(
         props.query,
