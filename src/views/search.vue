@@ -17,7 +17,7 @@
     </div>
     <!-- 搜索结果 -->
     <div class="search-result" v-show="query">
-      <suggest :query="query"></suggest>
+      <suggest :query="query" @selectSong="selectSong"></suggest>
     </div>
   </div>
 </template>
@@ -27,6 +27,8 @@ import { defineComponent, ref } from 'vue'
 import SearchInput from '@/components/search/search-input'
 import Suggest from '@/components/search/suggest'
 import { getHotKeys } from '@/service/search'
+import { ADD_SONG } from '@/store/type'
+import { useStore } from 'vuex'
 export default defineComponent({
   name: 'Search',
   components: {
@@ -34,6 +36,7 @@ export default defineComponent({
     Suggest
   },
   setup() {
+    const store = useStore()
     const query = ref('')
     const hotKeys = ref([])
     // 获取热门搜索
@@ -45,10 +48,18 @@ export default defineComponent({
     function addQuery(hotkey) {
       query.value = hotkey.key
     }
+
+    // 选择歌曲
+    function selectSong(song) {
+      // console.log(song)
+      store.dispatch(ADD_SONG, song)
+    }
+
     return {
       query,
       hotKeys,
-      addQuery
+      addQuery,
+      selectSong
     }
   }
 })

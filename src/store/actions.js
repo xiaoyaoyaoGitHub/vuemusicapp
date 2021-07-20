@@ -10,7 +10,8 @@ import {
     SET_FAVORITE_LIST,
     ADD_SONG_LYRIC,
     REMOVE_SONG,
-    CLEAR_SONG_LIST
+    CLEAR_SONG_LIST,
+    ADD_SONG
 } from './type'
 import { shuffle } from '@/assets/js/utils'
 import { PLAY_MODE } from '@/assets/js/constance'
@@ -96,6 +97,28 @@ const actions = {
         commit(SET_PLAY_LIST, [])
         commit(SET_PLAYING_STATE, false)
         commit(SET_CURRENT_INDEX, 0)
+    },
+    // 添加歌曲
+    [ADD_SONG]({ commit, state }, song) {
+        // console.log(song)
+        const playList = state.playList.slice()
+        const sequenceList = state.sequenceList.slice()
+        let currentIndex = state.currentIndex
+
+        const playListIndex = findIndex(playList, song)
+        if (playListIndex > -1) { // 已存在歌曲
+            currentIndex = playListIndex
+        } else {
+            playList.push(song)
+            sequenceList.push(song)
+            currentIndex = playList.length - 1
+        }
+
+        commit(SET_PLAY_LIST, playList)
+        commit(SET_SEQUENCE_LIST, sequenceList)
+        commit(SET_CURRENT_INDEX, currentIndex)
+        commit(SET_PLAYING_STATE, true)
+        commit(SET_FULL_SCREEN, true)
     }
 }
 

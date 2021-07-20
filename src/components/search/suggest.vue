@@ -9,7 +9,7 @@
           <p class="text"></p>
         </div>
       </li>
-      <li class="suggest-item" v-for="song in songs" :key="song.id">
+      <li class="suggest-item" @click="selectSong(song)" v-for="song in songs" :key="song.id">
         <div class="icon"><i class="icon-music"></i></div>
         <div class="name">
           <p class="text">{{song.singer}}-{{song.name}}</p>
@@ -37,7 +37,7 @@ export default defineComponent({
       default: true
     }
   },
-  setup(props) {
+  setup(props, { emit }) {
     const songs = ref([])
     const singer = ref(null)
     const pullLoadingText = ref('')
@@ -105,6 +105,11 @@ export default defineComponent({
       }
     }
 
+    // 选择歌曲
+    function selectSong(song) {
+        emit('selectSong', song)
+    }
+
     return {
       songs,
       singer,
@@ -112,6 +117,7 @@ export default defineComponent({
       pullLoadingText,
       noResult,
       rootRef,
+      selectSong,
       isPullLoading
     }
   }
