@@ -37,6 +37,7 @@ export default defineComponent({
       default: true
     }
   },
+  emits: ['selectSong'],
   setup(props, { emit }) {
     const songs = ref([])
     const singer = ref(null)
