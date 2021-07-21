@@ -24,7 +24,7 @@
       <div class="search-history" v-show="searchHistory.length">
         <h1 class="title">
           <span class="text">搜索历史</span>
-          <span class="clear">
+          <span class="clear" @click="clearSearch">
             <i class="icon-clear"></i>
           </span>
         </h1>
@@ -32,7 +32,8 @@
       </div>
      </div>
     </scroll>
-
+    <!-- 确认框 -->
+    <confirm ref="confirmRef" @confirm="clearSearchHistory"></confirm>
     <!-- 搜索结果 -->
     <div class="search-result" v-show="query">
       <suggest :query="query" @selectSong="selectSong"></suggest>
@@ -45,6 +46,7 @@ import { computed, defineComponent, ref, watch, nextTick } from 'vue'
 import SearchInput from '@/components/search/search-input'
 import SearchList from '@/components/base/search-list/search-list'
 import Suggest from '@/components/search/suggest'
+import Confirm from '@/components/base/confirm/confirm'
 import Scroll from '@/components/wrap-scroll'
 import useSearchHistory from '@/components/search/use-search-history'
 import { getHotKeys } from '@/service/search'
@@ -56,15 +58,17 @@ export default defineComponent({
     SearchInput,
     Suggest,
     SearchList,
-    Scroll
+    Scroll,
+    Confirm
   },
   setup() {
     const store = useStore()
     const query = ref('')
     const hotKeys = ref([])
     const scrollRef = ref(null)
+    const confirmRef = ref(null)
     const searchHistory = computed(() => store.state.searchHistory)
-    const { deleteSearch } = useSearchHistory()
+    const { deleteSearch, clearSearchHistory } = useSearchHistory()
     // 获取热门搜索
     getHotKeys().then(res => {
       hotKeys.value = res.hotKeys
@@ -88,6 +92,10 @@ export default defineComponent({
       store.dispatch(ADD_SONG, song)
     }
 
+    function clearSearch() {
+      confirmRef.value.show()
+    }
+
     return {
       query,
       hotKeys,
@@ -95,7 +103,10 @@ export default defineComponent({
       addQuery,
       selectSong,
       searchHistory,
-      deleteSearch
+      deleteSearch,
+      confirmRef,
+      clearSearch,
+      clearSearchHistory
     }
   }
 })

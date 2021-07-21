@@ -19,6 +19,11 @@ export function load(key) {
     return storage.get(key, [])
 }
 
+export function clear(key) {
+    storage.remove(key)
+    return []
+}
+
 function insertArray(arr, item, compare) {
     console.log('compare', compare)
     const index = arr.findIndex(compare)

@@ -40,7 +40,7 @@ export default defineComponent({
         },
         text: {
             type: String,
-            default: ''
+            default: '确定要清空吗'
         }
     },
     emits: ['confirm', 'cancel'],
