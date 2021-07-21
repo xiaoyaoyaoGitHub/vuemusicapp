@@ -23,6 +23,7 @@
 <script>
 import { defineComponent, ref, watch, computed, nextTick } from 'vue'
 import usePullUpLoad from './use-pull-up-load'
+import useSearchHistory from './use-search-history'
 import { search } from '@/service/search'
 import { processSongs } from '@/service/song'
 export default defineComponent({
@@ -45,6 +46,7 @@ export default defineComponent({
     const page = ref(1)
     const hasMore = ref(true)
     const { rootRef, isPullUpLoad, scroll } = usePullUpLoad(searchMore)
+    const { saveSearchHistory } = useSearchHistory()
     const loading = computed(() => {
       return !songs.value.length
     })
@@ -109,6 +111,7 @@ export default defineComponent({
     // 选择歌曲
     function selectSong(song) {
         emit('selectSong', song)
+        saveSearchHistory(song)
     }
 
     return {

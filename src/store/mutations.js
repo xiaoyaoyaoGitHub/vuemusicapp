@@ -6,7 +6,8 @@ import {
     SET_PLAYING_STATE,
     SET_PLAY_MODE,
     SET_FAVORITE_LIST,
-    ADD_SONG_LYRIC
+    ADD_SONG_LYRIC,
+    SET_SEARCH_HISTORY
 } from './type'
 
 const mutations = {
@@ -48,6 +49,13 @@ const mutations = {
             };
             return item
         })
+    },
+    // 设置搜索历史
+    [SET_SEARCH_HISTORY](state, query) {
+        // state.searchHostory
+        const searchHistory = state.searchHistory.slice()
+        searchHistory.unshift(query)
+        state.searchHistory = searchHistory
     }
 }
 

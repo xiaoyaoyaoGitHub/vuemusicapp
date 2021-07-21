@@ -11,7 +11,8 @@ import {
     ADD_SONG_LYRIC,
     REMOVE_SONG,
     CLEAR_SONG_LIST,
-    ADD_SONG
+    ADD_SONG,
+    SET_SEARCH_HISTORY
 } from './type'
 import { shuffle } from '@/assets/js/utils'
 import { PLAY_MODE } from '@/assets/js/constance'
@@ -119,6 +120,9 @@ const actions = {
         commit(SET_CURRENT_INDEX, currentIndex)
         commit(SET_PLAYING_STATE, true)
         commit(SET_FULL_SCREEN, true)
+    },
+    [SET_SEARCH_HISTORY]({ commit, state }, query) {
+        commit(SET_SEARCH_HISTORY, query)
     }
 }
 
