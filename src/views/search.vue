@@ -5,8 +5,9 @@
       <search-input v-model="query"></search-input>
     </div>
     <!-- 热门搜索 -->
-    <div class="search-content" v-show="!query">
-      <div class="hot-keys">
+    <scroll ref="scrollRef" class="search-content" v-show="!query">
+     <div>
+        <div class="hot-keys">
         <h1 class="title">热门搜索</h1>
         <ul>
           <li
@@ -29,7 +30,8 @@
         </h1>
         <search-list :searches="searchHistory" @select="selectSong"  @delete="deleteSearch"></search-list>
       </div>
-    </div>
+     </div>
+    </scroll>
 
     <!-- 搜索结果 -->
     <div class="search-result" v-show="query">
@@ -39,10 +41,11 @@
 </template>
 
 <script>
-import { computed, defineComponent, ref } from 'vue'
+import { computed, defineComponent, ref, watch, nextTick } from 'vue'
 import SearchInput from '@/components/search/search-input'
 import SearchList from '@/components/base/search-list/search-list'
 import Suggest from '@/components/search/suggest'
+import Scroll from '@/components/wrap-scroll'
 import useSearchHistory from '@/components/search/use-search-history'
 import { getHotKeys } from '@/service/search'
 import { ADD_SONG } from '@/store/type'
@@ -52,12 +55,14 @@ export default defineComponent({
   components: {
     SearchInput,
     Suggest,
-    SearchList
+    SearchList,
+    Scroll
   },
   setup() {
     const store = useStore()
     const query = ref('')
     const hotKeys = ref([])
+    const scrollRef = ref(null)
     const searchHistory = computed(() => store.state.searchHistory)
     const { deleteSearch } = useSearchHistory()
     // 获取热门搜索
@@ -70,6 +75,13 @@ export default defineComponent({
       query.value = hotkey.key
     }
 
+    watch(query, async (newQuery) => {
+      if (!newQuery) {
+        await nextTick()
+        scrollRef.value.scroll.refresh()
+      }
+    })
+
     // 选择歌曲
     function selectSong(song) {
       // console.log(song)
@@ -79,6 +91,7 @@ export default defineComponent({
     return {
       query,
       hotKeys,
+      scrollRef,
       addQuery,
       selectSong,
       searchHistory,
