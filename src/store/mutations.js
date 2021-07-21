@@ -51,10 +51,7 @@ const mutations = {
         })
     },
     // 设置搜索历史
-    [SET_SEARCH_HISTORY](state, query) {
-        // state.searchHostory
-        const searchHistory = state.searchHistory.slice()
-        searchHistory.unshift(query)
+    [SET_SEARCH_HISTORY](state, searchHistory) {
         state.searchHistory = searchHistory
     }
 }

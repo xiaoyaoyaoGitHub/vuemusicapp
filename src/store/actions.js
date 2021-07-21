@@ -121,8 +121,8 @@ const actions = {
         commit(SET_PLAYING_STATE, true)
         commit(SET_FULL_SCREEN, true)
     },
-    [SET_SEARCH_HISTORY]({ commit, state }, query) {
-        commit(SET_SEARCH_HISTORY, query)
+    [SET_SEARCH_HISTORY]({ commit, state }, searchHistory) {
+        commit(SET_SEARCH_HISTORY, searchHistory)
     }
 }
 

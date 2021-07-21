@@ -1,20 +1,28 @@
 
 import { SEARCH_KEY } from '@/assets/js/constance'
-import { save } from '@/assets/js/array-store'
+import { save, remove } from '@/assets/js/array-store'
 import { SET_SEARCH_HISTORY } from '@/store/type'
 import { useStore } from 'vuex'
 
 export default function useSearchHistory() {
     const store = useStore()
     function saveSearchHistory(query) {
-        save(query, SEARCH_KEY, (item) => {
-            return item === query
+        const searchHistory = save(query, SEARCH_KEY, (item) => {
+            return item.id === query.id
         })
 
-        store.commit(SET_SEARCH_HISTORY, query)
+        store.commit(SET_SEARCH_HISTORY, searchHistory)
+    }
+
+    function deleteSearch(query) {
+        const searchHistory = remove(query, SEARCH_KEY, (item) => {
+            return item.id === query.id
+        })
+        store.commit(SET_SEARCH_HISTORY, searchHistory)
     }
 
     return {
-        saveSearchHistory
+        saveSearchHistory,
+        deleteSearch
     }
 }

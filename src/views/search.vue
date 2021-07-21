@@ -20,14 +20,14 @@
         </ul>
       </div>
       <!-- 搜索历史 -->
-      <div class="search-history">
+      <div class="search-history" v-show="searchHistory.length">
         <h1 class="title">
           <span class="text">搜索历史</span>
           <span class="clear">
             <i class="icon-clear"></i>
           </span>
         </h1>
-        <search-list :searches="searchHistory"></search-list>
+        <search-list :searches="searchHistory" @select="selectSong"  @delete="deleteSearch"></search-list>
       </div>
     </div>
 
@@ -43,6 +43,7 @@ import { computed, defineComponent, ref } from 'vue'
 import SearchInput from '@/components/search/search-input'
 import SearchList from '@/components/base/search-list/search-list'
 import Suggest from '@/components/search/suggest'
+import useSearchHistory from '@/components/search/use-search-history'
 import { getHotKeys } from '@/service/search'
 import { ADD_SONG } from '@/store/type'
 import { useStore } from 'vuex'
@@ -58,6 +59,7 @@ export default defineComponent({
     const query = ref('')
     const hotKeys = ref([])
     const searchHistory = computed(() => store.state.searchHistory)
+    const { deleteSearch } = useSearchHistory()
     // 获取热门搜索
     getHotKeys().then(res => {
       hotKeys.value = res.hotKeys
@@ -79,7 +81,8 @@ export default defineComponent({
       hotKeys,
       addQuery,
       selectSong,
-      searchHistory
+      searchHistory,
+      deleteSearch
     }
   }
 })

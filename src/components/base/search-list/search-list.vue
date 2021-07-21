@@ -1,9 +1,9 @@
 <template>
     <div class="search-list">
         <transition-group name="list" tag="ul">
-            <li class="search-item" v-for="search in searches" :key="search.id">
+            <li class="search-item" v-for="search in searches" :key="search.id" @click="selectSearch(search)">
                 <span class="text">{{search.name}}</span>
-                <span class="icon">
+                <span class="icon" @click.stop="deleteSearch(search)">
                     <i class="icon-delete"></i>
                 </span>
             </li>
@@ -24,8 +24,19 @@ export default defineComponent({
             }
         }
     },
-    setup() {
+    emits: ['select', 'delete'],
+    setup(props, { emit }) {
+      function selectSearch(query) {
+          emit('select', query)
+      };
+      function deleteSearch(query) {
+          emit('delete', query)
+      }
 
+      return {
+        selectSearch,
+        deleteSearch
+      }
     }
 })
 </script>
