@@ -50,7 +50,7 @@
                 </p>
               </div>
               <!-- 无歌词 -->
-              <div class="pure-music">
+              <div class="pure-music" v-show="pureMusicLyric">
                 <p>
                   {{ pureMusicLyric }}
                 </p>

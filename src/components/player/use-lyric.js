@@ -17,6 +17,8 @@ export default function useLyric({ currentTime, songPlay }) {
         stopLyric()
         currentLyric.value = null
         const lyric = await getLyric(newSong)
+        console.log('lyric', lyric)
+        console.log('currentSong', currentSong)
         store.dispatch(ADD_SONG_LYRIC, { song: newSong, lyric })
         if (currentSong.value.lyric !== lyric) {
             return
@@ -24,13 +26,15 @@ export default function useLyric({ currentTime, songPlay }) {
         pureMusicLyric.value = ''
         currentLineNum.value = 0
         currentLyric.value = new Lyric(lyric, handleLyric)
+        console.log(currentLyric.value)
         const hasLyric = currentLyric.value.lines
-        if (hasLyric) { // 有歌词
+        console.log('hasLyric', hasLyric.length)
+        if (hasLyric.length) { // 有歌词
             if (songPlay.value) {
                 playLyric()
             }
         } else {
-            pureMusicLyric.value = currentLyric.value.replace(/[(\d{2}):(/d{2}):(/d{2})]/, '')
+            playingLyric.value = pureMusicLyric.value = lyric.replace(/[(\d{2}):(/d{2}):(/d{2})]/, '')
         }
     })
 
