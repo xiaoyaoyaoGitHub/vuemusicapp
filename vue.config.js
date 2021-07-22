@@ -16,5 +16,15 @@ module.exports = {
     before(app, serve, compile) {
       registerRouter(app, serve, compile)
     }
-  }
+  },
+  configureWebpack: (config) => {
+    if (process.env.npm_config_report) {
+      const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
+      config.plugins.push(new BundleAnalyzerPlugin())
+    }
+  },
+  productionSourceMap: false,
+  publicPath: process.env.NODE_ENV === 'production'
+    ? '/production-sub-path/'
+    : '/'
 }

@@ -8,39 +8,42 @@ const routes = [
   },
   {
     path: '/singer',
-    component: () => import('@/views/singer'),
+    component: () => import(/* webpackChunkName:"singer" */'@/views/singer'),
     children: [
       {
         path: ':id',
-        component: () => import('@/views/singer-detail')
+        component: () => import(/* webpackChunkName:"singer-detail" */'@/views/singer-detail')
       }
     ]
   },
   {
     path: '/recommend',
-    component: () => import('@/views/recommend'),
+    component: () => import(/* webpackChunkName:"recommend" */'@/views/recommend'),
     children: [
       {
         path: ':id',
-        component: () => import('@/views/album')
+        component: () => import(/* webpackChunkName:"album" */'@/views/album')
       }
     ]
   },
   {
     path: '/top-list',
-    component: () => import('@/views/top-list'),
+    component: () => import(/* webpackChunkName:"top-list" */'@/views/top-list'),
     children: [{
       path: ':id',
-      component: () => import('@/views/top-detail')
+      component: () => import(/* webpackChunkName:"top-detail" */'@/views/top-detail')
     }]
   },
   {
     path: '/search',
-    component: () => import('@/views/search')
+    component: () => import(/* webpackChunkName:"search" */'@/views/search')
   },
   {
     path: '/user',
-    component: () => import('@/views/user-content')
+    // component: () => import('@/views/user-content')
+    components: {
+      user: () => import(/* webpackChunkName:"user-content" */'@/views/user-content')
+    }
   },
   // not found
   {
