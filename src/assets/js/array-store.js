@@ -28,7 +28,10 @@ function insertArray(arr, item, compare) {
     console.log('compare', compare)
     const index = arr.findIndex(compare)
     console.log('index', index)
-    if (index >= 0) {
+    if (index === 0) {
+        return
+    }
+    if (index > 0) {
         arr.splice(index, 1)
     }
     arr.unshift(item) // 向数组开头添加
