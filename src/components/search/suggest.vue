@@ -48,7 +48,7 @@ export default defineComponent({
     const { rootRef, isPullUpLoad, scroll } = usePullUpLoad(searchMore)
     const { saveSearchHistory } = useSearchHistory()
     const loading = computed(() => {
-      return !songs.value.length
+      return !songs.value.length && props.query
     })
     const noResult = computed(() => {
       return !songs.value.length && !hasMore.value
