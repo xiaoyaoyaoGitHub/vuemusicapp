@@ -45,7 +45,15 @@
         <div class="search-result" v-show="query">
           <suggest @selectSong="selectSongBySuggest" :query="query"></suggest>
         </div>
+        <!-- 提示框 -->
+        <message ref="messageRef">
+          <div class="message-title">
+            <i class="icon-ok"></i>
+            <span class="text">1首歌曲已经添加到播放列表</span>
+          </div>
+        </message>
       </div>
+
     </transition>
   </teleport>
 </template>
@@ -57,6 +65,7 @@ import SearchInput from '@/components/search/search-input'
 import SongList from '@/components/base/song-list/song-list'
 import Switches from '@/components/base/switches/switches'
 import SearchList from '@/components/base/search-list/search-list'
+import Message from '@/components/base/message/message'
 import Suggest from '@/components/search/suggest'
 import Scroll from '@/components/wrap-scroll'
 import useSearchHistory from '@/components/search/use-search-history'
@@ -70,12 +79,14 @@ export default defineComponent({
     Switches,
     Scroll,
     SongList,
-    SearchList
+    SearchList,
+    Message
   },
   setup() {
     const store = useStore()
     const scrollRef = ref(null)
     const visible = ref(false)
+    const messageRef = ref(null)
     const currentIndex = ref(0)
     const query = ref('')
 
@@ -104,7 +115,8 @@ export default defineComponent({
 
     function selectSongBySongList({ song }) {
       store.dispatch(ADD_SONG, song)
-      hide()
+      messageRef.value.show()
+      // hide()
     }
 
     function selectSongBySearchList(song) {
@@ -129,7 +141,8 @@ export default defineComponent({
       currentIndex,
       searchHistory,
       playHistory,
-      scrollRef
+      scrollRef,
+      messageRef
     }
   }
 })
