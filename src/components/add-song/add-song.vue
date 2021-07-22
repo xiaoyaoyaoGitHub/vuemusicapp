@@ -13,7 +13,7 @@
                     <search-input v-model="query"></search-input>
                 </div>
                 <div class="search-result" v-show="query">
-                    <suggest :query="query"></suggest>
+                    <suggest @selectSong="selectSong" :query="query"></suggest>
                 </div>
             </div>
         </transition>
@@ -22,8 +22,10 @@
 
 <script>
 import { defineComponent, ref } from 'vue'
+import { useStore } from 'vuex'
 import SearchInput from '@/components/search/search-input'
 import Suggest from '@/components/search/suggest'
+import { ADD_SONG } from '@/store/type'
 
 export default defineComponent({
     name: 'AddSong',
@@ -32,6 +34,7 @@ export default defineComponent({
         Suggest
     },
     setup() {
+        const store = useStore()
         const visible = ref(false)
         const query = ref('')
         function show() {
@@ -41,10 +44,17 @@ export default defineComponent({
             visible.value = false
         }
 
+        // 选择搜索歌曲
+        function selectSong(song) {
+          store.dispatch(ADD_SONG, song)
+          hide()
+        }
+
         return {
             visible,
             show,
             hide,
+            selectSong,
             query
         }
     }

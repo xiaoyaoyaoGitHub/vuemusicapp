@@ -52,7 +52,7 @@
             </transition-group>
           </scroll>
           <!-- 添加 -->
-          <div class="list-add" @click.stop="addSong">
+          <div class="list-add" @click="addSong">
             <div class="add">
               <i class="icon-add"></i>
               <span class="text">添加歌曲到队列</span>

@@ -110,9 +110,12 @@ const actions = {
         if (playListIndex > -1) { // 已存在歌曲
             currentIndex = playListIndex
         } else {
-            playList.push(song)
-            sequenceList.push(song)
-            currentIndex = playList.length - 1
+            playList.unshift(song)
+            sequenceList.unshift(song)
+            currentIndex = 0
+            // playList.push(song)
+            // sequenceList.push(song)
+            // currentIndex = playList.length - 1
         }
 
         commit(SET_PLAY_LIST, playList)
