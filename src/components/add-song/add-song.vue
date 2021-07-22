@@ -24,7 +24,7 @@
               v-if="currentIndex === 0"
             >
               <div class="list-inner">
-                <song-list :songs="playHistory"></song-list>
+                <song-list @select="selectSongBySongList" :songs="playHistory"></song-list>
               </div>
             </scroll>
             <scroll
@@ -36,13 +36,14 @@
                 <search-list
                   :searches="searchHistory"
                   :showDelete="false"
+                  @select="selectSongBySearchList"
                 ></search-list>
               </div>
             </scroll>
           </div>
         </div>
         <div class="search-result" v-show="query">
-          <suggest @selectSong="selectSong" :query="query"></suggest>
+          <suggest @selectSong="selectSongBySuggest" :query="query"></suggest>
         </div>
       </div>
     </transition>
@@ -58,6 +59,7 @@ import Switches from '@/components/base/switches/switches'
 import SearchList from '@/components/base/search-list/search-list'
 import Suggest from '@/components/search/suggest'
 import Scroll from '@/components/wrap-scroll'
+import useSearchHistory from '@/components/search/use-search-history'
 import { ADD_SONG } from '@/store/type'
 
 export default defineComponent({
@@ -80,6 +82,8 @@ export default defineComponent({
     const searchHistory = computed(() => store.state.searchHistory)
     const playHistory = computed(() => store.state.playHistory)
 
+    const { saveSearchHistory } = useSearchHistory()
+
     watch(query, async newQuery => {
       await nextTick()
       if (!newQuery) {
@@ -98,9 +102,19 @@ export default defineComponent({
       visible.value = false
     }
 
-    // 选择搜索歌曲
-    function selectSong(song) {
+    function selectSongBySongList({ song }) {
       store.dispatch(ADD_SONG, song)
+      hide()
+    }
+
+    function selectSongBySearchList(song) {
+       query.value = song.name
+    }
+
+    // 选择搜索歌曲
+    function selectSongBySuggest(song) {
+      store.dispatch(ADD_SONG, song)
+      saveSearchHistory(song)
       hide()
     }
     console.log('playHistory', playHistory)
@@ -108,7 +122,9 @@ export default defineComponent({
       visible,
       show,
       hide,
-      selectSong,
+      selectSongBySuggest,
+      selectSongBySongList,
+      selectSongBySearchList,
       query,
       currentIndex,
       searchHistory,
