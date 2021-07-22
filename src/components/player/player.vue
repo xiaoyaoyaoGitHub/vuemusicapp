@@ -129,6 +129,7 @@ import useLyric from './use-lyric'
 import useMiddleInteractive from './use-middle-interactive'
 import useFavorite from './use-favorite'
 import useAnimation from './use-animation'
+import usePlayHistory from './use-play-history'
 import { formatTimes } from '@/assets/js/utils'
 import { PLAY_MODE } from '@/assets/js/constance'
 import {
@@ -169,6 +170,7 @@ export default defineComponent({
     const { modeIcon, changeMode, playMode } = useMode()
     const { getFavoriteIcon, toggleFavorite } = useFavorite()
     const { cdClass, cdWrapper, cdImage } = useCd()
+    const { savePlayHistory } = usePlayHistory()
     const {
       currentLyric,
       playLyric,
@@ -184,6 +186,7 @@ export default defineComponent({
       if (!newSong.id) return
       const audioValue = audioRef.value
       audioValue.src = newSong.url
+      savePlayHistory(newSong)
       songPlay.value = false
       audioRef.value.play()
       store.commit(SET_PLAYING_STATE, true)

@@ -12,3 +12,4 @@ export const REMOVE_SONG = 'REMOVE_SONG' // 删除歌曲
 export const CLEAR_SONG_LIST = 'CLEAR_SONG_LIST' // 清空播放列表
 export const ADD_SONG = 'ADD_SONG' // 添加歌曲
 export const SET_SEARCH_HISTORY = 'SEARCH_HISTORY' // 搜索历史
+export const SET_PLAY_HISTORY = 'SET_PLAY_HISTORY' // 设置播放历史

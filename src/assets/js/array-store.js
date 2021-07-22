@@ -10,7 +10,7 @@ export function save(item, key, compare) {
 export function remove(item, key, compare) {
     console.log('remove')
     const storageList = storage.get(key, [])
-    insertArray(storageList, item, compare)
+    deleteFromArray(storageList, compare)
     storage.set(key, storageList)
     return storageList
 }
@@ -30,7 +30,13 @@ function insertArray(arr, item, compare) {
     console.log('index', index)
     if (index >= 0) {
         arr.splice(index, 1)
-        return
     }
     arr.unshift(item) // 向数组开头添加
+}
+
+function deleteFromArray(arr, compare) {
+    const index = arr.findIndex(compare)
+    if (index > -1) {
+        arr.splice(index, 1)
+    }
 }

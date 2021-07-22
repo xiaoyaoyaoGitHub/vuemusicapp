@@ -7,7 +7,8 @@ import {
     SET_PLAY_MODE,
     SET_FAVORITE_LIST,
     ADD_SONG_LYRIC,
-    SET_SEARCH_HISTORY
+    SET_SEARCH_HISTORY,
+    SET_PLAY_HISTORY
 } from './type'
 
 const mutations = {
@@ -53,6 +54,10 @@ const mutations = {
     // 设置搜索历史
     [SET_SEARCH_HISTORY](state, searchHistory) {
         state.searchHistory = searchHistory
+    },
+    // 设置播放历史
+    [SET_PLAY_HISTORY](state, playHistory) {
+        state.playHistory = playHistory
     }
 }
 

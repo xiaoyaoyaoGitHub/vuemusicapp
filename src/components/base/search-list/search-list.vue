@@ -3,7 +3,7 @@
         <transition-group name="list" tag="ul">
             <li class="search-item" v-for="search in searches" :key="search.id" @click="selectSearch(search)">
                 <span class="text">{{search.name}}</span>
-                <span class="icon" @click.stop="deleteSearch(search)">
+                <span class="icon" v-show="showDelete" @click.stop="deleteSearch(search)">
                     <i class="icon-delete"></i>
                 </span>
             </li>
@@ -22,6 +22,10 @@ export default defineComponent({
             default() {
                 return []
             }
+        },
+        showDelete: {
+          type: Boolean,
+          default: true
         }
     },
     emits: ['select', 'delete'],

@@ -12,7 +12,8 @@ import {
     REMOVE_SONG,
     CLEAR_SONG_LIST,
     ADD_SONG,
-    SET_SEARCH_HISTORY
+    SET_SEARCH_HISTORY,
+    SET_PLAY_HISTORY
 } from './type'
 import { shuffle } from '@/assets/js/utils'
 import { PLAY_MODE } from '@/assets/js/constance'
@@ -126,6 +127,10 @@ const actions = {
     },
     [SET_SEARCH_HISTORY]({ commit, state }, searchHistory) {
         commit(SET_SEARCH_HISTORY, searchHistory)
+    },
+    // 设置播放歌曲历史列表
+    [SET_PLAY_HISTORY]({ commit, state }, playHistory) {
+        commit(SET_PLAY_HISTORY, playHistory)
     }
 }
 
